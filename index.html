@@ -367,6 +367,11 @@ textarea { font: inherit; color: inherit; }
 .gp-baut { --gc: var(--c4); } .gp-campus { --gc: var(--c5); } .gp-otros { --gc: var(--hair); }
 html.color-on .tile .tn { color: var(--gc); }
 html.color-on .gp-otros .tn, html.color-on .gp-entry .tn { color: var(--ink); }
+
+/* Escaleta por semanas */
+.timeline td.key .who { display: block; font-weight: 400; font-size: 13px; color: var(--ink2); }
+.esc-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 16px; }
+.esc-head h3 { margin: 0; }
 </style>
 
 </head>
@@ -669,45 +674,26 @@ html.color-on .gp-otros .tn, html.color-on .gp-entry .tn { color: var(--ink); }
     <section id="s-escaleta" data-r="escaleta" data-label="Escaleta" hidden>
       <div class="block">
         <h2>Escaleta del servicio</h2>
-        <p>El orden de cada domingo. Los tres servicios siguen la misma estructura y solo cambia la hora de inicio. Elige el servicio para ver las horas.</p>
-        <div class="seg" role="group" aria-label="Servicio" id="seg">
-          <button type="button" class="chip" data-start="600" aria-pressed="true">10h</button>
-          <button type="button" class="chip" data-start="750" aria-pressed="false">12:30h</button>
-          <button type="button" class="chip" data-start="1110" aria-pressed="false">18:30h</button>
-        </div>
-        <p class="muted"><span class="swatch"></span>Lo marcado en amarillo se hace fuera del programa habitual. Es puntual e informativo: en vMix no cambia nada salvo indicación expresa o escrita.</p>
+        <p>El orden de cada reunión. Elige la escaleta y el servicio para ver las horas y qué hacer en vMix. Las canciones y quién lidera están en el PDF de cada escaleta.</p>
+        <div class="seg" role="group" aria-label="Escaleta" id="esc-sel"></div>
+        <div class="seg" role="group" aria-label="Servicio" id="seg"></div>
+        <p class="muted"><span class="swatch"></span>Lo marcado en amarillo se hace fuera del programa habitual. Si en la columna «En vMix» no pone otra cosa, en vMix no cambia nada salvo indicación expresa o escrita.</p>
+        <div class="esc-head"><h3 id="esc-title"></h3><a class="btn" id="esc-pdf" href="#escaleta" target="_blank" rel="noopener">Abrir el PDF</a></div>
       </div>
       <div class="tw">
         <table class="timeline">
           <thead><tr><th>Hora</th><th>Qué pasa</th><th>Dura</th><th>En vMix</th></tr></thead>
-          <tbody>
-              <tr><td class="time" data-off="-30">--:--</td><td class="key">Apertura bienvenida (autoriza Eventos)</td><td class="dur"></td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr><td class="time" data-off="-5">--:--</td><td class="key">Apertura de puertas</td><td class="dur"></td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr><td class="time" data-off="-5">--:--</td><td class="key">Pre-roll</td><td class="dur">5'</td><td class="vm">Se abre con WALK IN (11) en el Program y STREAMING (4) en la previa. Cuando entra el pre-roll en STREAMING, cambia con el Fade 2 (columna central, el más lento) y quédate en STREAMING hasta el final</td></tr>
-              <tr><td class="time" data-off="0">--:--</td><td class="key">Alabanza</td><td class="dur">30'</td><td class="vm">Las letras llegan por NDI desde el Mac mini AV 2. En INSTAGRAM MIX sale lo que envía ese Mac mini. Si el NDI se cuelga, pasa a BACKUP SIN AV (5) hasta que se arregle</td></tr>
-              <tr class="hl"><td class="time">Dentro de la alabanza</td><td class="key">Santa Cena, dentro de la alabanza y antes de la última canción</td><td class="dur"></td><td class="vm">Solo informativa y puntual. En vMix no cambia nada salvo indicación expresa o escrita</td></tr>
-              <tr><td class="time" data-off="30">--:--</td><td class="key">Peticiones + agradecimientos</td><td class="dur">3'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr><td class="time" data-off="33">--:--</td><td class="key">Minuto de conexión + bienvenida</td><td class="dur">2'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr><td class="time" data-off="35">--:--</td><td class="key">Ofrenda</td><td class="dur">5'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr><td class="time" data-off="40">--:--</td><td class="key">Vídeo anuncios</td><td class="dur">5'</td><td class="vm">Los videoanuncios llegan por NDI desde el Mac mini AV 2. En INSTAGRAM MIX sale lo que envía ese Mac mini. Si el NDI se cuelga, pasa a BACKUP SIN AV (5) hasta que se arregle</td></tr>
-              <tr><td class="time" data-off="45">--:--</td><td class="key">Anuncios</td><td class="dur">5'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr class="hl"><td class="time">Dentro de los anuncios</td><td class="key">Castanyera</td><td class="dur"></td><td class="vm">Solo informativa y puntual. En vMix no cambia nada salvo indicación expresa o escrita</td></tr>
-              <tr class="hl"><td class="time" data-off="50">--:--</td><td class="key">Vídeo CXLM: locales</td><td class="dur">12'</td><td class="vm">Solo informativo y puntual. En vMix no cambia nada salvo indicación expresa o escrita</td></tr>
-              <tr><td class="time" data-off="62">--:--</td><td class="key">Mensaje + llamado</td><td class="dur">40'</td><td class="vm">El realizador inicia la grabación del ATEM cuando empieza la predicación</td></tr>
-              <tr><td class="time" data-off="102">--:--</td><td class="key">Biblia + despedida</td><td class="dur">2'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr><td class="time" data-off="104">--:--</td><td class="key">Canción final</td><td class="dur">3'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
-              <tr><td class="time" data-off="107">--:--</td><td class="key">Salida</td><td class="dur"></td><td class="vm">Termina con WALK OUT (12) y sigue <a href="#durante">Al terminar</a></td></tr>
-          </tbody>
+          <tbody id="esc-body"></tbody>
         </table>
       </div>
       <div class="block" id="escaletas">
-        <h3>Escaletas de cada domingo</h3>
-        <p class="muted">Aquí se guardan los PDF de las escaletas, del más reciente al más antiguo.</p>
-        <div class="esc-list" id="esc-list" aria-live="polite"></div>
+        <h3>Escaletas guardadas</h3>
+        <p class="muted">Los PDF de cada escaleta, de la más reciente a la más antigua.</p>
+        <div class="esc-list" id="esc-list"></div>
       </div>
       <div class="note">
         <span class="label">Qué cambia cada semana</span>
-        <p>Las canciones, quién lidera y quién predica, los vídeos y los anuncios cambian cada domingo. La estructura y los tiempos se repiten. Esta escaleta parte de la del 01/11/2026.</p>
+        <p>Cada semana llega una escaleta nueva y su estructura puede cambiar: horas, duración de la alabanza o partes distintas. Las canciones, quién lidera y quién predica cambian siempre. Aquí se ven las partes, las horas y lo que hay que hacer en vMix.</p>
       </div>
       <div class="note">
         <span class="label">Siguiente paso</span>
@@ -1265,14 +1251,130 @@ html.color-on .gp-otros .tn, html.color-on .gp-entry .tn { color: var(--ink); }
   qf.addEventListener('input', filterFaults);
   $('#q-falla-clear').addEventListener('click', function () { qf.value = ''; filterFaults(); qf.focus(); });
 
-  /* Escaleta: horas según el servicio */
-  function fmt(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
-  function setStart(start) {
-    $$('#seg button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-start') === start)); });
-    $$('#s-escaleta td[data-off]').forEach(function (td) { td.textContent = fmt(start + (+td.getAttribute('data-off'))); });
+  /* Escaleta: datos de cada semana. Para añadir una: sumar un objeto al principio de ESCALETAS y subir el PDF a la carpeta escaletas/.
+     t = hora de cada servicio (una por cada elemento de services); k = qué hay que hacer en vMix (ver VM); h = 1 si va en amarillo. */
+  var ESCALETAS = [
+    { date: '2026-11-15', chip: 'Domingo', title: 'Reunión de domingo', services: ['10h', '12:30h'], pdf: 'escaletas/2026-11-15-domingo.pdf', rows: [
+      { n: 'Apertura bienvenida', w: 'Autoriza Eventos', t: ['09:30', '12:00'] },
+      { n: 'Apertura de puertas', t: ['10:00', '12:25'] },
+      { n: 'Pre-roll', t: ['10:00', '12:25'], d: "5'", k: 'preroll' },
+      { n: 'Alabanza', t: ['10:05', '12:30'], d: "15'", k: 'letras' },
+      { n: 'Peticiones + agradecimientos', w: 'Juan M.', t: ['10:20', '12:45'], d: "3'" },
+      { n: 'Minuto de conexión + bienvenida', t: ['10:23', '12:48'], d: "2'" },
+      { n: 'Ofrenda', t: ['10:25', '12:50'], d: "5'" },
+      { n: 'Vídeo anuncios', t: ['10:30', '12:55'], d: "5'", k: 'videos' },
+      { n: 'Anuncios', w: 'Juan / Damsy', t: ['10:35', '13:00'], d: "5'" },
+      { n: 'Mensaje', w: 'Juan M.', t: ['10:40', '13:05'], d: "40'", k: 'mensaje' },
+      { n: 'Llamado', w: 'Juan M.', t: ['11:20', '13:45'], d: "5'" },
+      { n: 'Biblia + despedida', t: ['11:25', '13:50'], d: "2'" },
+      { n: 'Canción final', t: ['11:27', '13:52'], d: "3'" },
+      { n: 'Salida', t: ['11:30', '13:55'], k: 'salida' }
+    ] },
+    { date: '2026-11-15', chip: 'Especial bautismos', title: 'Reunión de bautismos + Tocando el cielo', services: ['18:30h'], pdf: 'escaletas/2026-11-15-bautismos.pdf', rows: [
+      { n: 'Apertura bienvenida', w: 'Autoriza Eventos', t: ['17:45'] },
+      { n: 'Apertura auditorio bautizados + acompañantes (foto)', t: ['18:00'], h: 1 },
+      { n: 'Apertura de puertas', t: ['18:20'] },
+      { n: 'Pre-roll', t: ['18:25'], d: "5'", k: 'preroll' },
+      { n: 'Alabanza', t: ['18:30'], d: "10'", k: 'letras' },
+      { n: 'Bienvenida', w: 'Juan M.', t: ['18:40'], d: "5'" },
+      { n: 'Pensamiento + llamado a bautizarse', w: 'Juan M.', t: ['18:45'], d: "20'" },
+      { n: 'Bautismos / adoración', t: ['19:05'], d: "50'", k: 'baut', h: 1 },
+      { n: 'Fin de bautismos', t: ['19:55'] },
+      { n: 'Ofrenda', t: ['19:55'], d: "5'" },
+      { n: 'Vídeo anuncios', t: ['20:00'], d: "5'", k: 'videos' },
+      { n: 'Anuncios', w: 'Juan M.', t: ['20:05'], d: "3'" },
+      { n: 'Despedida + Biblia', w: 'Juan M.', t: ['20:08'], d: "5'" },
+      { n: 'Canción final', t: ['20:13'], d: "5'" },
+      { n: 'Salida', t: ['20:18'], k: 'salida' }
+    ] },
+    { date: '2026-11-01', chip: 'Domingo', title: 'Reunión de domingo', services: ['10h', '12:30h', '18:30h'], pdf: 'escaletas/2026-11-01-domingo.pdf', rows: [
+      { n: 'Apertura bienvenida', w: 'Autoriza Eventos', t: ['09:30', '12:00', '18:00'] },
+      { n: 'Apertura de puertas', t: ['09:55', '12:25', '18:25'] },
+      { n: 'Pre-roll', t: ['09:55', '12:25', '18:25'], d: "5'", k: 'preroll' },
+      { n: 'Alabanza', t: ['10:00', '12:30', '18:30'], d: "30'", k: 'letras' },
+      { n: 'Santa Cena, dentro de la alabanza y antes de la última canción', t: ['Dentro de la alabanza', 'Dentro de la alabanza', 'Dentro de la alabanza'], k: 'info', h: 1 },
+      { n: 'Peticiones + agradecimientos', t: ['10:30', '13:00', '19:00'], d: "3'" },
+      { n: 'Minuto de conexión + bienvenida', t: ['10:33', '13:03', '19:03'], d: "2'" },
+      { n: 'Ofrenda', t: ['10:35', '13:05', '19:05'], d: "5'" },
+      { n: 'Vídeo anuncios', t: ['10:40', '13:10', '19:10'], d: "5'", k: 'videos' },
+      { n: 'Anuncios', t: ['10:45', '13:15', '19:15'], d: "5'" },
+      { n: 'Castanyera', t: ['Dentro de los anuncios', 'Dentro de los anuncios', 'Dentro de los anuncios'], k: 'info', h: 1 },
+      { n: 'Vídeo CXLM: locales', t: ['10:50', '13:20', '19:20'], d: "12'", k: 'info', h: 1 },
+      { n: 'Mensaje + llamado', w: 'Juan M.', t: ['11:02', '13:32', '19:32'], d: "40'", k: 'mensaje' },
+      { n: 'Biblia + despedida', t: ['11:42', '14:12', '20:12'], d: "2'" },
+      { n: 'Canción final', t: ['11:44', '14:14', '20:14'], d: "3'" },
+      { n: 'Salida', t: ['11:47', '14:17', '20:17'], k: 'salida' }
+    ] }
+  ];
+  var VM = {
+    preroll: 'Se abre con WALK IN (11) en el Program y STREAMING (4) en la previa. Cuando entra el pre-roll en STREAMING, cambia con el Fade 2 (columna central, el más lento) y quédate en STREAMING hasta el final',
+    letras: 'Las letras llegan por NDI desde el Mac mini AV 2. En INSTAGRAM MIX sale lo que envía ese Mac mini. Si el NDI se cuelga, pasa a BACKUP SIN AV (5) hasta que se arregle',
+    videos: 'Los videoanuncios llegan por NDI desde el Mac mini AV 2. En INSTAGRAM MIX sale lo que envía ese Mac mini. Si el NDI se cuelga, pasa a BACKUP SIN AV (5) hasta que se arregle',
+    mensaje: 'El realizador inicia la grabación del ATEM cuando empieza la predicación',
+    baut: 'Mix Bautizo (45) con COMPO BAUT: CAM 3 a la izquierda y CAM 4 a la derecha. Sale por el Output 3 al Mac mini AV y a la LED wall',
+    info: 'Solo informativa y puntual. En vMix no cambia nada salvo indicación expresa o escrita',
+    salida: 'Termina con WALK OUT (12) y sigue <a href="#durante">Al terminar</a>',
+    '': '<span class="todo">Por completar</span>'
+  };
+  var escSelEl = $('#esc-sel'), segEl = $('#seg'), escBody = $('#esc-body'), escTitle = $('#esc-title'), escPdf = $('#esc-pdf'), escList = $('#esc-list');
+  var escCur = 0, svcCur = 0;
+  function dmy(iso) { var p = iso.split('-'); return p[2] + '/' + p[1]; }
+  function escDate(iso) {
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d.getTime())) return iso;
+    var t = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    return t.charAt(0).toUpperCase() + t.slice(1);
   }
-  $$('#seg button').forEach(function (b) { b.addEventListener('click', function () { setStart(+b.getAttribute('data-start')); }); });
-  setStart(600);
+  function toMin(t) { var m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; }
+  function mkChip(label, pressed, fn) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip';
+    b.setAttribute('aria-pressed', String(pressed)); b.textContent = label; b.addEventListener('click', fn); return b;
+  }
+  function escRender() {
+    var e = ESCALETAS[escCur];
+    escSelEl.textContent = '';
+    ESCALETAS.forEach(function (x, i) { escSelEl.appendChild(mkChip(dmy(x.date) + ' · ' + x.chip, i === escCur, function () { escCur = i; svcCur = 0; escRender(); })); });
+    segEl.textContent = '';
+    segEl.hidden = e.services.length < 2;
+    e.services.forEach(function (name, i) { segEl.appendChild(mkChip(name, i === svcCur, function () { svcCur = i; escRender(); })); });
+    escTitle.textContent = e.title + ' · ' + escDate(e.date);
+    escPdf.href = e.pdf;
+    escBody.textContent = '';
+    e.rows.forEach(function (r) {
+      var tr = document.createElement('tr'); if (r.h) tr.className = 'hl';
+      var a = document.createElement('td'); a.className = 'time'; a.textContent = r.t[svcCur] || r.t[0];
+      var b = document.createElement('td'); b.className = 'key'; b.textContent = r.n;
+      if (r.w) { var w = document.createElement('span'); w.className = 'who'; w.textContent = r.w; b.appendChild(w); }
+      var c = document.createElement('td'); c.className = 'dur'; c.textContent = r.d || '';
+      var d = document.createElement('td'); d.className = 'vm'; d.innerHTML = VM[r.k || ''];
+      tr.appendChild(a); tr.appendChild(b); tr.appendChild(c); tr.appendChild(d); escBody.appendChild(tr);
+    });
+  }
+  function escArchive() {
+    escList.textContent = '';
+    ESCALETAS.forEach(function (x) {
+      var row = document.createElement('div'); row.className = 'esc';
+      var info = document.createElement('div'); info.className = 'info';
+      var b = document.createElement('b'); b.textContent = escDate(x.date);
+      var sm = document.createElement('small'); sm.textContent = x.title + ' · ' + x.services.join(', ');
+      info.appendChild(b); info.appendChild(sm);
+      var act = document.createElement('div'); act.className = 'esc-actions';
+      var a = document.createElement('a'); a.className = 'btn'; a.href = x.pdf; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Abrir PDF';
+      act.appendChild(a); row.appendChild(info); row.appendChild(act); escList.appendChild(row);
+    });
+  }
+  (function () {
+    var today = todayISO(), nm = new Date().getHours() * 60 + new Date().getMinutes();
+    for (var i = 0; i < ESCALETAS.length; i++) {
+      if (ESCALETAS[i].date !== today) continue;
+      var rows = ESCALETAS[i].rows, last = rows[rows.length - 1];
+      for (var j = 0; j < ESCALETAS[i].services.length; j++) {
+        var m = toMin(last.t[j]);
+        if (m !== null && m > nm) { escCur = i; svcCur = j; return; }
+      }
+    }
+  })();
+  escRender(); escArchive();
 
   /* Casilla: algo fuera del programa habitual (se guarda solo en este dispositivo) */
   var EX = 'vmix-bcn-extra-v1', exT = $('#ex-text'), exM = $('#ex-msg'), exSaved = null;
@@ -1320,37 +1422,6 @@ html.color-on .gp-otros .tn, html.color-on .gp-entry .tn { color: var(--ink); }
   }
   setColor(store.get('vmix-bcn-color') !== '0');
   colorBtn.addEventListener('click', function () { setColor(!document.documentElement.classList.contains('color-on')); });
-
-  /* Escaletas en PDF: lista de enlaces. Para añadir una escaleta, suma una línea a ESC_LIST:
-     { date: 'AAAA-MM-DD', name: 'Escaleta 15 de noviembre', url: 'https://…enlace al PDF…' } */
-  var ESC_LIST = [];
-  var escList = $('#esc-list');
-  function escDate(iso) {
-    var d = new Date(iso + 'T12:00:00');
-    if (isNaN(d.getTime())) return iso;
-    var t = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    return t.charAt(0).toUpperCase() + t.slice(1);
-  }
-  function escRender() {
-    escList.textContent = '';
-    var items = ESC_LIST.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
-    if (!items.length) {
-      var e = document.createElement('p'); e.className = 'empty';
-      e.textContent = 'Aún no hay escaletas guardadas.';
-      escList.appendChild(e);
-    }
-    items.forEach(function (it) {
-      var row = document.createElement('div'); row.className = 'esc';
-      var info = document.createElement('div'); info.className = 'info';
-      var b = document.createElement('b'); b.textContent = escDate(it.date);
-      var sm = document.createElement('small'); sm.textContent = it.name || 'Escaleta';
-      info.appendChild(b); info.appendChild(sm);
-      var act = document.createElement('div'); act.className = 'esc-actions';
-      var a = document.createElement('a'); a.className = 'btn'; a.href = it.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Abrir PDF';
-      act.appendChild(a); row.appendChild(info); row.appendChild(act); escList.appendChild(row);
-    });
-  }
-  escRender();
 
   /* Saltos dentro de la referencia */
   $$('[data-jump]').forEach(function (b) {
