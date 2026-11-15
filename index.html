@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#d8d9d1">
+<title>Guía de usuario de Streaming</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231b1c1a'/%3E%3Cpath d='M9 8h14v3H9zM9 14.5h14v3H9zM9 21h9v3H9z' fill='%23d8d9d1'/%3E%3C/svg%3E">
+<style>
+:root { color-scheme: light; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: una hoja de papel electrónico con pestañas de archivador arriba; el contenido se lee en una columna, las rutas de señal se dibujan como cables de colores. */
+:root {
+  --paper: #d8d9d1;
+  --panel: #e4e5de;
+  --ink: #1b1c1a;
+  --ink2: #4a4c47;
+  --hair: rgba(27, 28, 26, .22);
+  --accent: #2f4d62;
+  --c1: #a4392c;
+  --c2: #2f6a4a;
+  --c3: #a67a12;
+  --c4: #2f5a92;
+  --c5: #6a437d;
+  --hl: #e8d84c;
+  --c3t: #7d5b09;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151614; --panel: #1d1f1c; --ink: #d9dad1; --ink2: #9c9e95;
+    --hair: rgba(217, 218, 209, .22); --accent: #8fb0c4;
+    --c1: #e0715f; --c2: #6fbf93; --c3: #d9ab45; --c4: #7fa8de; --c5: #b98ad0; --hl: #5c5410; --c3t: #d9ab45;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151614; --panel: #1d1f1c; --ink: #d9dad1; --ink2: #9c9e95;
+  --hair: rgba(217, 218, 209, .22); --accent: #8fb0c4;
+  --c1: #e0715f; --c2: #6fbf93; --c3: #d9ab45; --c4: #7fa8de; --c5: #b98ad0; --hl: #5c5410; --c3t: #d9ab45;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 16px/1.6 var(--font-body);
+  margin: 0; -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--paper);
+}
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button, input, select { font: inherit; color: inherit; }
+code, .mono { font-family: var(--font-mono); }
+code { font-size: .88em; background: var(--panel); border: 1px solid var(--hair); padding: 1px 6px; }
+
+.wrap {
+  max-width: 980px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Cabecera */
+.top { padding-block: 28px 20px; display: grid; gap: 18px; }
+.top-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.eyebrow { font: 500 12px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); margin: 0 0 6px; }
+h1 { font: 600 clamp(30px, 6vw, 46px)/1.05 var(--font-mono); letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+.btn {
+  background: transparent; border: 1.5px solid var(--ink); padding: 6px 12px;
+  font: 500 12px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+}
+.btn:hover { background: var(--ink); color: var(--paper); }
+.search { display: flex; border: 1.5px solid var(--ink); background: var(--panel); }
+.search label { font: 500 12px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 14px 12px; border-right: 1.5px solid var(--ink); color: var(--ink2); }
+.search input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 12px; font-size: 16px; }
+.search input:focus-visible { outline-offset: -4px; }
+.results { margin: 0; padding: 0; list-style: none; border: 1.5px solid var(--ink); border-top: 0; background: var(--panel); }
+.results li { border-top: 1px solid var(--hair); }
+.results li:first-child { border-top: 0; }
+.results button { width: 100%; text-align: left; background: none; border: 0; padding: 10px 12px; cursor: pointer; display: grid; gap: 2px; }
+.results button:hover, .results button:focus-visible { background: var(--ink); color: var(--paper); }
+.results .where { font: 500 11px/1.3 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+.results .snip { font-size: 14px; line-height: 1.4; }
+.results .none { padding: 10px 12px; color: var(--ink2); font-size: 14px; }
+
+/* Pestañas */
+.tabsbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); }
+.tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1.5px solid var(--ink); scrollbar-width: none; padding-top: 4px; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a {
+  flex: none; text-decoration: none; color: var(--ink2);
+  font: 500 13px/1 var(--font-mono); letter-spacing: .04em;
+  padding: 12px 14px 11px; border: 1.5px solid var(--hair); border-bottom: 0; border-radius: 3px 3px 0 0;
+  background: var(--paper);
+}
+.tabs a:hover { color: var(--ink); border-color: var(--ink); }
+.tabs a[aria-current="page"] {
+  color: var(--ink); background: var(--panel); border-color: var(--ink);
+  font-weight: 600; position: relative; margin-bottom: -1.5px; padding-bottom: 12.5px;
+}
+
+/* Hoja */
+.sheet { background: var(--panel); border: 1.5px solid var(--ink); border-top: 0; padding: clamp(18px, 4vw, 40px); margin-bottom: 40px; min-height: 60vh; }
+.sheet > section { display: grid; gap: 28px; align-content: start; }
+h2 { font: 600 clamp(24px, 4.5vw, 32px)/1.15 var(--font-mono); letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+h3 { font: 600 15px/1.3 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; margin: 0 0 12px; }
+p { margin: 0; max-width: 68ch; }
+.lead { font-size: 18px; color: var(--ink); max-width: 62ch; }
+.muted { color: var(--ink2); }
+.block { display: grid; gap: 12px; min-width: 0; }
+.rule { border: 0; border-top: 1.5px solid var(--ink); margin: 0; }
+
+/* Accesos rápidos */
+.quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.qcard {
+  display: grid; gap: 10px; align-content: start; text-decoration: none; color: var(--ink);
+  border: 1.5px solid var(--ink); padding: 18px; background: var(--paper); min-width: 0;
+}
+.qcard:hover, .qcard:focus-visible { background: var(--ink); color: var(--paper); }
+.qcard .jack { width: 18px; height: 18px; border-radius: 50%; border: 4px solid var(--cable); background: var(--paper); }
+.qcard .k { font: 600 22px/1.15 var(--font-mono); }
+.qcard .d { font-size: 14px; line-height: 1.45; }
+.qcard .go { font: 500 12px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
+
+/* Servicios del día */
+.services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.service { border: 1.5px solid var(--ink); padding: 14px 16px; display: grid; gap: 8px; background: var(--paper); }
+.service .time { font: 600 28px/1 var(--font-mono); }
+.service .what { font-size: 14px; color: var(--ink2); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px/1 var(--font-mono); padding: 5px 8px; border: 1.5px solid var(--ink); background: transparent; }
+.chip.on { background: var(--ink); color: var(--paper); }
+.chip.off { border-style: dashed; color: var(--ink2); border-color: var(--hair); }
+
+/* Índice con puntos guía */
+.index { display: grid; }
+.index a { display: flex; align-items: baseline; gap: 10px; padding: 10px 0; text-decoration: none; color: var(--ink); border-top: 1px solid var(--hair); }
+.index a:last-child { border-bottom: 1px solid var(--hair); }
+.index .t { min-width: 0; }
+.index .dots { flex: 1; min-width: 24px; border-bottom: 2px dotted var(--ink2); transform: translateY(-4px); opacity: .6; }
+.index .to { font: 600 13px/1.3 var(--font-mono); text-align: right; white-space: nowrap; }
+.index a:hover .to, .index a:focus-visible .to { text-decoration: underline; }
+
+/* Pasos */
+.step { display: grid; gap: 14px; padding-top: 22px; border-top: 1.5px solid var(--ink); }
+.step h3 { display: flex; align-items: center; gap: 12px; margin: 0; font-size: 17px; letter-spacing: .02em; text-transform: none; }
+.step .n { flex: none; width: 34px; height: 34px; display: grid; place-items: center; background: var(--ink); color: var(--paper); font: 600 16px/1 var(--font-mono); }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.checks label { display: flex; gap: 12px; align-items: flex-start; padding: 8px 4px; cursor: pointer; }
+.checks input { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 2px 0 0; border: 1.5px solid var(--ink); background: var(--paper); display: grid; place-items: center; cursor: pointer; }
+.checks input:checked { background: var(--ink); }
+.checks input:checked::after { content: "✕"; color: var(--paper); font: 600 13px/1 var(--font-mono); }
+.checks input:checked + span { color: var(--ink2); text-decoration: line-through; text-decoration-thickness: 1px; }
+.progress { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; border: 1.5px solid var(--ink); padding: 10px 14px; background: var(--paper); }
+.progress .count { font: 600 15px/1 var(--font-mono); }
+.steps-ol { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 10px; }
+.steps-ol li { counter-increment: s; display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-top: 1px solid var(--hair); }
+.steps-ol li::before { content: counter(s); flex: none; min-width: 28px; height: 28px; display: grid; place-items: center; border: 1.5px solid var(--ink); font: 600 14px/1 var(--font-mono); }
+.steps-ol li > div { min-width: 0; }
+.bul { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 68ch; }
+
+/* Notas */
+.note { border: 1.5px dashed var(--ink); padding: 14px 16px; display: grid; gap: 6px; background: var(--paper); max-width: 72ch; }
+.note .label { font: 600 11px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+.note p { max-width: none; }
+
+/* Tablas */
+.tw { overflow-x: auto; border: 1.5px solid var(--ink); background: var(--paper); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th { font: 600 11px/1.2 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; text-align: left; padding: 10px 12px; border-bottom: 1.5px solid var(--ink); background: var(--panel); white-space: nowrap; }
+td { padding: 10px 12px; border-top: 1px solid var(--hair); vertical-align: top; min-width: 120px; }
+tr:first-child td { border-top: 0; }
+td.num, th.num { width: 1%; min-width: 0; white-space: nowrap; font: 600 14px/1.5 var(--font-mono); }
+td.key { font-weight: 600; }
+
+/* Nombre de grabación */
+.tool { border: 1.5px solid var(--ink); background: var(--paper); padding: 16px; display: grid; gap: 14px; }
+.fields { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label { font: 500 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); }
+.field input, .field select { width: 100%; min-width: 0; border: 1.5px solid var(--ink); background: var(--panel); padding: 9px 10px; border-radius: 0; }
+.outrow { display: flex; gap: 10px; align-items: stretch; }
+.out { flex: 1; min-width: 0; border: 1.5px solid var(--ink); background: var(--panel); padding: 10px 12px; font: 500 14px/1.5 var(--font-mono); overflow-wrap: anywhere; }
+
+/* Búsqueda de fallos */
+.finder { display: flex; border: 1.5px solid var(--ink); background: var(--paper); }
+.finder input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 12px; }
+.finder .btn { border: 0; border-left: 1.5px solid var(--ink); }
+.faults { display: grid; gap: 8px; }
+details { border: 1.5px solid var(--ink); background: var(--paper); }
+summary { cursor: pointer; padding: 12px 14px; font-weight: 600; list-style: none; display: flex; gap: 12px; align-items: baseline; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "+"; font: 600 16px/1 var(--font-mono); width: 14px; flex: none; }
+details[open] > summary::before { content: "−"; }
+details[open] > summary { border-bottom: 1.5px solid var(--ink); background: var(--panel); }
+.fix { display: grid; grid-template-columns: 1fr 1fr; }
+.fix > div { padding: 14px; display: grid; gap: 6px; align-content: start; }
+.fix > div + div { border-left: 1px solid var(--hair); }
+.fix .label { font: 600 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); }
+.fix p { max-width: none; }
+.empty { padding: 14px; border: 1.5px dashed var(--ink); }
+
+/* Cables */
+.lanes { display: grid; gap: 22px; }
+.lane { display: grid; gap: 8px; }
+.lane-name { display: flex; align-items: center; gap: 10px; font: 600 13px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+.lane-name i { width: 14px; height: 14px; background: var(--cable); display: block; }
+.lane-body { display: grid; grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr) 56px minmax(0, 1fr); align-items: center; }
+.ports { display: grid; gap: 6px; }
+.port { border: 1.5px solid var(--ink); background: var(--paper); padding: 7px 10px; font-size: 14px; line-height: 1.35; }
+.core { border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper); padding: 12px; text-align: center; font: 600 14px/1.35 var(--font-mono); }
+.cable { position: relative; height: 4px; background: var(--cable); align-self: center; }
+.cable::before, .cable::after { content: ""; position: absolute; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; border: 3px solid var(--cable); background: var(--panel); }
+.cable::before { left: -7px; }
+.cable::after { right: -7px; }
+
+/* Referencia */
+.jumps { display: flex; flex-wrap: wrap; gap: 8px; }
+.jumps button { border: 1.5px solid var(--ink); background: var(--paper); padding: 7px 10px; font: 500 12px/1 var(--font-mono); cursor: pointer; }
+.jumps button:hover { background: var(--ink); color: var(--paper); }
+.hit { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.foot { padding-block: 0 40px; font: 400 12px/1.6 var(--font-mono); color: var(--ink2); letter-spacing: .04em; }
+
+@media (max-width: 760px) {
+  .quick, .services { grid-template-columns: 1fr; }
+  .fields { grid-template-columns: 1fr 1fr; }
+  .fix { grid-template-columns: 1fr; }
+  .fix > div + div { border-left: 0; border-top: 1px solid var(--hair); }
+  .lane-body { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .cable { width: 4px; height: 36px; justify-self: center; }
+  .cable::before, .cable::after { left: 50%; margin-left: -7px; margin-top: 0; right: auto; }
+  .cable::before { top: -7px; }
+  .cable::after { top: auto; bottom: -7px; }
+  .index a { flex-wrap: wrap; }
+  .index .dots { display: none; }
+  .index .to { text-align: left; width: 100%; color: var(--accent); }
+}
+@media (max-width: 480px) {
+  .fields { grid-template-columns: 1fr; }
+  .outrow { flex-direction: column; }
+  .top-row .btn { align-self: flex-start; }
+}
+@media print { .tabsbar, .search, .btn { display: none; } }
+
+/* Glosario técnico */
+.tech { display: block; margin-top: 8px; font: 400 13px/1.55 var(--font-mono); color: var(--ink2); }
+.tech b { font: 600 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); margin-right: 8px; }
+
+/* Esquemas de conexión */
+.t-video { --cable: var(--c1); } .t-red { --cable: var(--c4); } .t-audio { --cable: var(--c3); }
+.t-datos { --cable: var(--c2); } .t-inet { --cable: var(--c5); }
+[id^="esq-"], [id^="ref-"] { scroll-margin-top: 70px; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+.lg { display: flex; align-items: center; gap: 10px; font: 500 12px/1.2 var(--font-mono); }
+.lg .line { width: 36px; flex: none; }
+.line { display: block; position: relative; height: 4px; background: var(--cable); }
+.pend .line, .link.pend .line { background: repeating-linear-gradient(90deg, var(--cable) 0 8px, transparent 8px 13px); }
+.chains { display: grid; gap: 26px; }
+.chainbox { display: grid; gap: 10px; }
+.chainbox .lane-name i { background: var(--cable); }
+.chain { display: flex; align-items: stretch; }
+.node { flex: 1 1 0; min-width: 0; border: 1.5px solid var(--ink); background: var(--paper); padding: 10px 12px; display: grid; gap: 3px; align-content: center; font-size: 14px; line-height: 1.35; }
+.node b { font: 600 14px/1.3 var(--font-mono); }
+.node span { color: var(--ink2); font-size: 13px; }
+.node.multi { align-content: start; }
+.node.multi span { border-top: 1px solid var(--hair); padding-top: 4px; }
+.node.pend { border-style: dashed; background: transparent; }
+.link { flex: 0 0 104px; display: flex; flex-direction: column; justify-content: center; align-items: stretch; gap: 6px; padding: 0; }
+.link span { font: 500 11px/1.25 var(--font-mono); text-align: center; letter-spacing: .02em; }
+.link .line::before, .link .line::after { content: ""; position: absolute; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; border: 3px solid var(--cable); background: var(--panel); }
+.link .line::before { left: -6px; }
+.link .line::after { right: -6px; }
+.link { margin: 0 6px; }
+@media (max-width: 760px) {
+  .chain { flex-direction: column; align-items: stretch; }
+  .link { flex: none; margin: 0; display: grid; grid-template-columns: 1fr 4px 1fr; column-gap: 12px; align-items: center; min-height: 58px; }
+  .link .line { grid-column: 2; grid-row: 1; width: 4px; height: 100%; min-height: 58px; background: var(--cable); }
+  .link.pend .line { background: repeating-linear-gradient(180deg, var(--cable) 0 8px, transparent 8px 13px); }
+  .link span { grid-column: 3; grid-row: 1; text-align: left; }
+  .link .line::before, .link .line::after { left: 50%; margin: 0 0 0 -6px; right: auto; }
+  .link .line::before { top: -6px; }
+  .link .line::after { top: auto; bottom: -6px; }
+}
+
+/* Escaleta */
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg .chip { cursor: pointer; font-size: 13px; padding: 8px 12px; }
+.seg .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.seg .chip:hover { border-color: var(--ink); }
+.timeline td { min-width: 0; }
+.timeline td.time { white-space: nowrap; font: 600 14px/1.5 var(--font-mono); }
+.timeline td.dur { white-space: nowrap; font: 500 13px/1.5 var(--font-mono); color: var(--ink2); }
+.timeline td.vm { min-width: 220px; font-size: 14px; }
+.timeline tr.hl td { background: var(--hl); border-top-color: var(--ink); }
+.timeline tr.hl td.dur, .timeline tr.hl td.vm .todo { color: var(--ink); }
+.timeline .todo { color: var(--ink2); }
+.swatch { display: inline-block; width: 16px; height: 16px; background: var(--hl); border: 1.5px solid var(--ink); vertical-align: -3px; margin-right: 8px; }
+
+/* Botones de cabecera y colores del texto */
+.top-actions { display: flex; gap: 8px; flex: none; }
+.btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+a.btn { text-decoration: none; display: inline-block; color: var(--ink); }
+a.btn:hover { color: var(--paper); }
+html.color-on .sheet strong { color: var(--c1); }
+html.color-on .sheet h3 { color: var(--c4); }
+html.color-on .sheet .step h3 { color: var(--ink); }
+html.color-on td.num, html.color-on .index .to { color: var(--c4); }
+html.color-on code { color: var(--c5); border-color: var(--c5); }
+html.color-on .note .label { color: var(--c3t); }
+html.color-on .fix > div:first-child .label { color: var(--c2); }
+html.color-on .fix > div + div .label { color: var(--c3t); }
+html.color-on .tech b { color: var(--c5); }
+html.color-on .timeline td.time { color: var(--c4); }
+html.color-on .timeline tr.hl td.time, html.color-on .timeline tr.hl td.vm { color: var(--ink); }
+html.color-on .g { color: var(--c2); font-weight: 600; }
+html.color-on .r { color: var(--c1); font-weight: 600; }
+html.color-on .index a:hover .to { color: var(--accent); }
+
+/* Escaletas en PDF */
+.esc-list { display: grid; gap: 8px; }
+.esc { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px 16px; border: 1.5px solid var(--ink); background: var(--paper); padding: 12px 14px; }
+.esc .info { min-width: 0; display: grid; gap: 2px; }
+.esc .info b { font-weight: 600; }
+.esc .info small { color: var(--ink2); font: 400 12px/1.4 var(--font-mono); overflow-wrap: anywhere; }
+.esc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.fields.f3 { grid-template-columns: 1fr 2fr auto; align-items: end; }
+.field input[type="file"] { padding: 7px 8px; }
+#esc-msg { min-height: 1.5em; }
+@media (max-width: 760px) { .fields.f3 { grid-template-columns: 1fr; } }
+td code, p code, li code, span code { overflow-wrap: anywhere; }
+
+/* Avisos destacados */
+.must { border: 2px solid var(--ink); border-left: 8px solid var(--c1); background: var(--paper); padding: 14px 16px; display: grid; gap: 8px; max-width: 72ch; }
+.must.path { border-left-color: var(--c2); }
+.must .label { font: 600 11px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--c1); }
+.must.path .label { color: var(--c2); }
+.must p { max-width: none; }
+.must code { overflow-wrap: anywhere; }
+textarea { font: inherit; color: inherit; }
+.field textarea { width: 100%; min-width: 0; border: 1.5px solid var(--ink); background: var(--panel); padding: 9px 10px; border-radius: 0; resize: vertical; line-height: 1.5; }
+.outrow .muted { align-self: center; flex: 1; min-width: 0; font-size: 14px; }
+.seg .chip:not([aria-pressed]) { cursor: pointer; }
+.seg .chip:not([aria-pressed]):hover { background: var(--ink); color: var(--paper); }
+
+/* Cuadrícula de inputs */
+.ig { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.tile { border: 1.5px solid var(--ink); border-left: 7px solid var(--gc); background: var(--paper); padding: 8px 10px 9px; display: grid; gap: 3px; align-content: start; min-width: 0; transition: opacity .15s; }
+.tile .tg { font: 500 10px/1.2 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); }
+.tile .tn { font: 600 22px/1 var(--font-mono); }
+.tile .tt { font: 600 13px/1.3 var(--font-mono); overflow-wrap: anywhere; }
+.tile .ts { font: 400 12px/1.3 var(--font-mono); color: var(--ink2); }
+.tile.dim { opacity: .2; }
+.gp-main { --gc: var(--c1); } .gp-entry { --gc: var(--ink2); } .gp-lat { --gc: var(--c3); } .gp-ig { --gc: var(--c2); }
+.gp-baut { --gc: var(--c4); } .gp-campus { --gc: var(--c5); } .gp-otros { --gc: var(--hair); }
+html.color-on .tile .tn { color: var(--gc); }
+html.color-on .gp-otros .tn, html.color-on .gp-entry .tn { color: var(--ink); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="top-row">
+      <div>
+        <p class="eyebrow">Hillsong Streaming BCN · vMix 29</p>
+        <h1>Guía de usuario de Streaming</h1>
+      </div>
+      <div class="top-actions">
+        <button class="btn" id="colors" type="button" aria-pressed="true" aria-label="Activar o quitar los colores del texto">Color</button>
+        <button class="btn" id="theme" type="button" aria-label="Cambiar entre tema claro y oscuro">Tema</button>
+      </div>
+    </div>
+    <div>
+      <div class="search" role="search">
+        <label for="q">Buscar</label>
+        <input id="q" type="search" placeholder="Ej: no suena, Instagram, NDI, grabación" autocomplete="off">
+      </div>
+      <ul class="results" id="results" hidden></ul>
+    </div>
+  </header>
+
+  <div class="tabsbar">
+    <nav class="tabs" aria-label="Secciones de la guía" id="tabs">
+      <a href="#inicio" data-r="inicio">Inicio</a>
+      <a href="#antes" data-r="antes">Antes del servicio</a>
+      <a href="#durante" data-r="durante">Durante el servicio</a>
+      <a href="#escaleta" data-r="escaleta">Escaleta</a>
+      <a href="#falla" data-r="falla">Si algo falla</a>
+      <a href="#cosas" data-r="cosas">Qué es cada cosa</a>
+      <a href="#como" data-r="como">Cómo funciona</a>
+      <a href="#esquemas" data-r="esquemas">Esquemas</a>
+      <a href="#pendientes" data-r="pendientes">Pendientes</a>
+      <a href="#referencia" data-r="referencia">Referencia técnica</a>
+    </nav>
+  </div>
+
+  <main class="sheet">
+
+    <!-- INICIO -->
+    <section id="s-inicio" data-r="inicio" data-label="Inicio">
+      <div class="block">
+        <p class="lead">Un PC con vMix recibe la imagen de las cámaras y de dos Mac mini. La mezcla y la envía a YouTube, a Instagram en vertical, a las pantallas laterales de la sala y a la grabación.</p>
+      </div>
+
+      <div class="block">
+        <h3>Ir directo a lo que necesitas</h3>
+        <div class="quick">
+          <a class="qcard" href="#antes" style="--cable: var(--c2)">
+            <span class="jack"></span>
+            <span class="k">Antes del servicio</span>
+            <span class="d">Encender, comprobar y preparar el directo, paso a paso.</span>
+            <span class="go">Abrir →</span>
+          </a>
+          <a class="qcard" href="#durante" style="--cable: var(--c1)">
+            <span class="jack"></span>
+            <span class="k">Durante el servicio</span>
+            <span class="d">Arrancar, mover el programa y cerrar bien.</span>
+            <span class="go">Abrir →</span>
+          </a>
+          <a class="qcard" href="#falla" style="--cable: var(--c3)">
+            <span class="jack"></span>
+            <span class="k">Si algo falla</span>
+            <span class="d">Busca lo que ves y prueba lo más sencillo primero.</span>
+            <span class="go">Abrir →</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Los tres servicios del domingo</h3>
+        <div class="services">
+          <div class="service">
+            <span class="time">10:00</span>
+            <div class="chips"><span class="chip on">YouTube</span><span class="chip off">Instagram no</span></div>
+            <span class="what">Primer servicio: orden completo de apertura.</span>
+          </div>
+          <div class="service">
+            <span class="time">12:30</span>
+            <div class="chips"><span class="chip on">YouTube</span><span class="chip on">Instagram</span></div>
+            <span class="what">Se cierran los programas y se apagan las cámaras entre servicios.</span>
+          </div>
+          <div class="service">
+            <span class="time">18:30</span>
+            <div class="chips"><span class="chip on">YouTube</span><span class="chip on">Instagram</span></div>
+            <span class="what">Último servicio: quien lleva vMix cierra y guarda todo.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>Índice</h3>
+        <nav class="index" aria-label="Índice">
+          <a href="#antes"><span class="t">Preparar un servicio paso a paso</span><span class="dots"></span><span class="to">Antes del servicio</span></a>
+          <a href="#durante"><span class="t">Seguir los pasos con el directo en marcha</span><span class="dots"></span><span class="to">Durante el servicio</span></a>
+          <a href="#escaleta"><span class="t">Saber cuándo toca cada parte del servicio</span><span class="dots"></span><span class="to">Escaleta</span></a>
+          <a href="#falla"><span class="t">Resolver algo que no funciona</span><span class="dots"></span><span class="to">Si algo falla</span></a>
+          <a href="#cosas"><span class="t">Ver las 45 fuentes de vMix en cuadrícula y saber qué es cada una</span><span class="dots"></span><span class="to">Qué es cada cosa</span></a>
+          <a href="#como"><span class="t">Entender cómo encaja todo y qué significan las palabras</span><span class="dots"></span><span class="to">Cómo funciona</span></a>
+          <a href="#esquemas"><span class="t">Ver cómo se conectan los equipos y las señales</span><span class="dots"></span><span class="to">Esquemas</span></a>
+          <a href="#pendientes"><span class="t">Ver qué falta por completar o revisar</span><span class="dots"></span><span class="to">Pendientes</span></a>
+          <a href="#referencia"><span class="t">Consultar ajustes concretos (calidad, audio, salidas)</span><span class="dots"></span><span class="to">Referencia técnica</span></a>
+        </nav>
+      </div>
+
+      <div class="note">
+        <span class="label">Cómo usar esta guía</span>
+        <p>Antes de un servicio, abre «Antes del servicio» y marca cada paso. Con el directo en marcha, sigue «Durante el servicio». Si algo falla, ve a «Si algo falla». El cuadro de búsqueda de arriba encuentra cualquier palabra en toda la guía.</p>
+      </div>
+    </section>
+
+    <!-- ANTES -->
+    <section id="s-antes" data-r="antes" data-label="Antes del servicio" hidden>
+      <div class="block">
+        <h2>Antes del servicio</h2>
+        <p>Este es el orden de apertura. Marca cada paso según lo hagas y, al acabar el servicio, desmárcalos para la próxima vez. Las marcas se guardan solo en este navegador.</p>
+      </div>
+      <div class="note">
+        <span class="label">Entre servicios</span>
+        <p>Este orden completo es el del primer servicio del día. Entre los servicios de las 10h, 12:30h y 18:30h solo se cierran los programas y se apagan las cámaras; el PC, el ATEM y los monitores se dejan encendidos. Para el siguiente servicio se vuelven a abrir los programas y se encienden las cámaras, se actualiza la hora en el título de las grabaciones (paso 3) y se vuelven a gestionar las emisiones en las plataformas (paso 6).</p>
+      </div>
+      <div class="progress">
+        <span class="count" id="count">0 de 0 pasos</span>
+        <button class="btn" id="reset" type="button">Desmarcar todo</button>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">1</span>Encender el equipo</h3>
+        <ul class="checks">
+          <li><label><input type="checkbox"><span>Enchufa el ATEM antes de encender el PC y abrir vMix. Si no, la fuente 2 de vMix saldrá «Offline».</span></label></li>
+          <li><label><input type="checkbox"><span>Enciende los dos monitores.</span></label></li>
+          <li><label><input type="checkbox"><span>Enciende el PC e inicia sesión. La clave no está en esta guía: pídesela a quien opera el servicio.</span></label></li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">2</span>Conectar la grabación del ATEM con el PC</h3>
+        <p>Un automatismo del escritorio detecta cuándo termina una grabación en el ATEM y la copia a la carpeta «Subidos Ordenador» de Google Drive.</p>
+        <div class="must"><span class="label">Muy importante</span>
+          <p>Para que el PC vea el SSD del ATEM (<code>\\ATEM-Mini-Extreme-ISO\SSD_TV</code>) hay que abrir <strong>ATEM Setup</strong> en el PC y pulsar <strong>Show in file explorer</strong>.</p>
+          <p>Si no se hace, el automatismo no detecta la ruta de la carpeta del SSD, no se conecta al ATEM y no copia la grabación.</p></div>
+        <ul class="checks">
+          <li><label><input type="checkbox"><span>Abre ATEM Setup en el PC y pulsa <strong>Show in file explorer</strong>. Comprueba que se abre la carpeta <code>\\ATEM-Mini-Extreme-ISO\SSD_TV</code>.</span></label></li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">3</span>Poner nombre a las grabaciones</h3>
+        <p>Cambia el nombre de las grabaciones con este formato: fecha, predicador, título de la prédica y hora del servicio, separados por guion bajo. Hazlo en los dos sitios: en el ATEM y en vMix. Las dos grabaciones acaban en la misma carpeta de Google Drive: vMix graba directamente ahí y el automatismo pega la del ATEM.</p>
+        <div class="must path"><span class="label">Ruta exacta donde se guardan las grabaciones</span>
+          <p><code>G:\Unidades compartidas\Equipo Creativo 2026\2026\Hillsong En Linea\Reuniones\Subidos Ordenador</code></p>
+          <p>La unidad <code>G:</code> es Google Drive y esa carpeta es «Subidos Ordenador».</p></div>
+        <div class="tool">
+          <div class="fields">
+            <div class="field"><label for="f-date">Fecha</label><input id="f-date" type="date"></div>
+            <div class="field"><label for="f-pastor">Predicador</label><input id="f-pastor" type="text" placeholder="Nombre Pastor" autocomplete="off"></div>
+            <div class="field"><label for="f-title">Título de la prédica</label><input id="f-title" type="text" placeholder="Titulo de la Predica" autocomplete="off"></div>
+            <div class="field"><label for="f-serv">Servicio</label>
+              <select id="f-serv"><option value="10h">10h</option><option value="1230h">12:30h</option><option value="1830h">18:30h</option></select>
+            </div>
+          </div>
+          <div class="outrow">
+            <div class="out" id="f-out" aria-live="polite">01012000_Nombre Pastor_Titulo de la Predica_10h</div>
+            <button class="btn" id="f-copy" type="button">Copiar</button>
+          </div>
+        </div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Parte</th><th>Qué poner</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+              <tr><td class="key">Fecha</td><td>Día, mes y año pegados</td><td><code>01012000</code></td></tr>
+              <tr><td class="key">Predicador</td><td>Nombre de quien predica</td><td><code>Nombre Pastor</code></td></tr>
+              <tr><td class="key">Título</td><td>Título de la prédica</td><td><code>Titulo de la Predica</code></td></tr>
+              <tr><td class="key">Servicio</td><td>10h, 1230h o 1830h</td><td><code>10h</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">4</span>Abrir vMix y comprobar las fuentes</h3>
+        <ul class="checks">
+          <li><label><input type="checkbox"><span>Abre el archivo de vMix del servicio (está en el escritorio).</span></label></li>
+          <li><label><input type="checkbox"><span>Los inputs están activos y funcionando. La fuente 2 (el ATEM) muestra imagen y no «Offline».</span></label></li>
+          <li><label><input type="checkbox"><span>Llegan las dos señales NDI: la fuente 3 (Mac mini AV 2) y la 31 (Mac mini AV).</span></label></li>
+          <li><label><input type="checkbox"><span>Los archivos multimedia funcionan: WALK IN, WALK OUT, TEMPORIZADOR, CORTINILLA, EN DIRECTO y los rótulos.</span></label></li>
+          <li><label><input type="checkbox"><span>En la franja de abajo de vMix pone 1080p50 y FPS 50, sin avisos en rojo.</span></label></li>
+          <li><label><input type="checkbox"><span>La ventana de la izquierda <span class="g">(verde, Preview)</span> muestra STREAMING, la de la derecha <span class="r">(roja, Program)</span> muestra WALK IN, y las pantallas laterales un fondo NEUTRO.</span></label></li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">5</span>Comprobar el sonido</h3>
+        <ul class="checks">
+          <li><label><input type="checkbox"><span>«Audio General» se mueve en el medidor cuando hay sonido.</span></label></li>
+          <li><label><input type="checkbox"><span>Sube el volumen del Mac mini AV 2 (fuente 3) si tiene que sonar: se guarda a cero.</span></label></li>
+          <li><label><input type="checkbox"><span>Activa el Auditorio (A) y comprueba que suena en la sala. Se guarda silenciado.</span></label></li>
+          <li><label><input type="checkbox"><span>Escucha el resultado con los auriculares.</span></label></li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">6</span>Preparar el directo</h3>
+        <ul class="checks">
+          <li><label><input type="checkbox"><span>Instagram (solo en los servicios de 12:30h y 18:30h): crea el directo y pega la clave nueva en el Stream 2. Normalmente solo vale una vez.</span></label></li>
+          <li><label><input type="checkbox"><span>YouTube: tiene agendados los tres servicios. Selecciona el que toque y comprueba que la clave del Stream 1 es la suya.</span></label></li>
+          <li><label><input type="checkbox"><span>Comprueba que Google Drive (<code>G:</code>) está abierto, sincroniza y tiene espacio libre para grabar.</span></label></li>
+        </ul>
+      </div>
+
+      <div class="note">
+        <span class="label">Siguiente paso</span>
+        <p>Todo listo: pasa a <a href="#durante">Durante el servicio</a>. Si algo no cuadra, ve a <a href="#falla">Si algo falla</a>.</p>
+      </div>
+    </section>
+
+    <!-- DURANTE -->
+    <section id="s-durante" data-r="durante" data-label="Durante el servicio" hidden>
+      <div class="block">
+        <h2>Durante el servicio</h2>
+        <p>Arranca el directo, abre el programa y muévelo hasta el final. Para saber cuándo toca cada parte, mira la <a href="#escaleta">Escaleta</a>.</p>
+      </div>
+
+      <div class="block" id="extras">
+        <h3>Fuera del programa habitual</h3>
+        <div class="tool">
+          <div class="field"><label for="ex-text">¿Hoy hay algo fuera del programa habitual?</label>
+            <textarea id="ex-text" rows="4" placeholder="Ej.: bautismos durante la alabanza; entrevista a las 11:20; presentación de un proyecto…"></textarea></div>
+          <div class="seg" role="group" aria-label="Añadir un tipo de cambio">
+            <button type="button" class="chip" data-add="Bautismos">+ Bautismos</button>
+            <button type="button" class="chip" data-add="Entrevista">+ Entrevista</button>
+            <button type="button" class="chip" data-add="Presentación">+ Presentación</button>
+            <button type="button" class="chip" data-add="Otro">+ Otro</button>
+          </div>
+          <div class="outrow"><p class="muted" id="ex-msg" role="status">Se guarda solo en este dispositivo.</p><button class="btn" id="ex-clear" type="button">Borrar</button></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">1</span>Arrancar</h3>
+        <ol class="steps-ol">
+          <li><div>Pulsa <strong>Record</strong> en vMix y confirma el aviso.</div></li>
+          <li><div>Pulsa <strong>Stream</strong> en vMix y confirma. Emite a YouTube (Stream 1) y, en los servicios de 12:30h y 18:30h, también a Instagram (Stream 2). En el de las 10h solo se emite a YouTube.</div></li>
+          <li><div>Termina de lanzar la retransmisión en las plataformas (YouTube e Instagram).</div></li>
+          <li><div>Comprueba que las emisiones están al aire y que se ve y se escucha bien, mirándolas desde otro dispositivo. Si dudas, abre el engranaje de Stream y pulsa <strong>View Status</strong>.</div></li>
+        </ol>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">2</span>Abrir el programa</h3>
+        <ol class="steps-ol">
+          <li><div>Entra con <strong>WALK IN (11)</strong> en el Program <span class="r">(rojo)</span> y <strong>STREAMING (4)</strong> en la previa, el Preview <span class="g">(verde)</span>.</div></li>
+          <li><div>Cuando entre el pre-roll en STREAMING, cambia con el <strong>Fade «2»</strong> de la columna central: es la transición más lenta.</div></li>
+          <li><div>Quédate en <strong>STREAMING (4)</strong> hasta el final de la reunión.</div></li>
+          <li><div>Si el NDI se queda colgado en las letras o en un vídeo, pasa a <strong>BACKUP SIN AV (5)</strong> hasta que se arregle.</div></li>
+          <li><div><strong>STREAMING NO LOGO (6)</strong> solo se usa puntualmente, según convenga.</div></li>
+          <li><div>Una vez empezado el servicio, saca de vez en cuando el grafismo <strong>EN DIRECTO (9)</strong>.</div></li>
+        </ol>
+        <p class="muted">STREAMING, BACKUP SIN AV y STREAMING NO LOGO son presets que combinan las capas de otros inputs. Qué lleva cada uno está en <a href="#cosas">Qué es cada cosa</a>.</p>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">3</span>Mientras dura el servicio</h3>
+        <ul class="bul">
+          <li><strong>Pantallas laterales:</strong> en LATERAL MIX (22) cambias entre los fondos NEUTRO 1, 2 y 3 y sacas los nombres (Juan Mejías, Damsy Mich o los dos).</li>
+          <li><strong>Instagram:</strong> en INSTAGRAM MIX (30) alternas entre PLANO CORTO y PLANO GENERAL cuando no hay alabanza ni videoanuncios. En la alabanza y en los videoanuncios sale lo que envía por NDI el Mac mini AV 2 (fuente 3).</li>
+          <li><strong>Bautizos:</strong> en Mix Bautizo (45) sacas COMPO BAUT, que pone CAM 3 a la izquierda y CAM 4 a la derecha a pantalla partida. Sale por el Output 3 al Mac mini AV, que lo muestra en la LED wall.</li>
+          <li><strong>Grabación del ATEM:</strong> el realizador (quien está en vMix) la inicia cuando empieza la predicación y la para al final.</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <h3><span class="n">4</span>Al terminar</h3>
+        <ol class="steps-ol">
+          <li><div>Termina con el input WALK OUT (12) en pantalla.</div></li>
+          <li><div>Para las grabaciones de vMix.</div></li>
+          <li><div>Comprueba que la grabación del ATEM está parada. Si el realizador no se acordó de pararla, páusala tú.</div></li>
+          <li><div>Para las retransmisiones: primero en las plataformas (YouTube e Instagram) y después en vMix (Stream).</div></li>
+          <li><div>Comprueba que las dos grabaciones han llegado a la carpeta «Subidos Ordenador» de Google Drive. Si la del ATEM no ha llegado, súbela a mano: copia el archivo desde <code>\\ATEM-Mini-Extreme-ISO\SSD_TV</code> a esa carpeta.</div></li>
+          <li><div>Sugerido: deja la previsualización en STREAMING y guarda el archivo de vMix (botón <strong>Save</strong>).</div></li>
+        </ol>
+      </div>
+
+      <div class="note">
+        <span class="label">Entre servicios (10h, 12:30h y 18:30h)</span>
+        <p>Se cierran los programas y se apagan las cámaras; el PC, el ATEM y los monitores se dejan encendidos. Se actualiza la hora en el título de las grabaciones y se vuelven a gestionar las emisiones: en YouTube están agendados los tres servicios y se elige el que toque, y en Instagram solo se retransmiten los de 12:30h y 18:30h.</p>
+        <p><strong>Tras el servicio de las 18:30h:</strong> la persona que ha gestionado vMix en ese turno cierra y guarda todo: cierra vMix y apaga el PC, el ATEM, los monitores y las cámaras.</p>
+      </div>
+
+      <div class="note">
+        <span class="label">Si algo falla en directo</span>
+        <p>Sigue <a href="#falla">Si algo falla</a>. Como norma: saca el bucle WALK OUT (12) para ganar tiempo y, si el NDI se cuelga en las letras o en un vídeo, cambia a BACKUP SIN AV (5). Si cae un solo stream, reinícialo sin parar el otro.</p>
+      </div>
+    </section>
+
+    <!-- ESCALETA -->
+    <section id="s-escaleta" data-r="escaleta" data-label="Escaleta" hidden>
+      <div class="block">
+        <h2>Escaleta del servicio</h2>
+        <p>El orden de cada domingo. Los tres servicios siguen la misma estructura y solo cambia la hora de inicio. Elige el servicio para ver las horas.</p>
+        <div class="seg" role="group" aria-label="Servicio" id="seg">
+          <button type="button" class="chip" data-start="600" aria-pressed="true">10h</button>
+          <button type="button" class="chip" data-start="750" aria-pressed="false">12:30h</button>
+          <button type="button" class="chip" data-start="1110" aria-pressed="false">18:30h</button>
+        </div>
+        <p class="muted"><span class="swatch"></span>Lo marcado en amarillo se hace fuera del programa habitual. Es puntual e informativo: en vMix no cambia nada salvo indicación expresa o escrita.</p>
+      </div>
+      <div class="tw">
+        <table class="timeline">
+          <thead><tr><th>Hora</th><th>Qué pasa</th><th>Dura</th><th>En vMix</th></tr></thead>
+          <tbody>
+              <tr><td class="time" data-off="-30">--:--</td><td class="key">Apertura bienvenida (autoriza Eventos)</td><td class="dur"></td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr><td class="time" data-off="-5">--:--</td><td class="key">Apertura de puertas</td><td class="dur"></td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr><td class="time" data-off="-5">--:--</td><td class="key">Pre-roll</td><td class="dur">5'</td><td class="vm">Se abre con WALK IN (11) en el Program y STREAMING (4) en la previa. Cuando entra el pre-roll en STREAMING, cambia con el Fade 2 (columna central, el más lento) y quédate en STREAMING hasta el final</td></tr>
+              <tr><td class="time" data-off="0">--:--</td><td class="key">Alabanza</td><td class="dur">30'</td><td class="vm">Las letras llegan por NDI desde el Mac mini AV 2. En INSTAGRAM MIX sale lo que envía ese Mac mini. Si el NDI se cuelga, pasa a BACKUP SIN AV (5) hasta que se arregle</td></tr>
+              <tr class="hl"><td class="time">Dentro de la alabanza</td><td class="key">Santa Cena, dentro de la alabanza y antes de la última canción</td><td class="dur"></td><td class="vm">Solo informativa y puntual. En vMix no cambia nada salvo indicación expresa o escrita</td></tr>
+              <tr><td class="time" data-off="30">--:--</td><td class="key">Peticiones + agradecimientos</td><td class="dur">3'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr><td class="time" data-off="33">--:--</td><td class="key">Minuto de conexión + bienvenida</td><td class="dur">2'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr><td class="time" data-off="35">--:--</td><td class="key">Ofrenda</td><td class="dur">5'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr><td class="time" data-off="40">--:--</td><td class="key">Vídeo anuncios</td><td class="dur">5'</td><td class="vm">Los videoanuncios llegan por NDI desde el Mac mini AV 2. En INSTAGRAM MIX sale lo que envía ese Mac mini. Si el NDI se cuelga, pasa a BACKUP SIN AV (5) hasta que se arregle</td></tr>
+              <tr><td class="time" data-off="45">--:--</td><td class="key">Anuncios</td><td class="dur">5'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr class="hl"><td class="time">Dentro de los anuncios</td><td class="key">Castanyera</td><td class="dur"></td><td class="vm">Solo informativa y puntual. En vMix no cambia nada salvo indicación expresa o escrita</td></tr>
+              <tr class="hl"><td class="time" data-off="50">--:--</td><td class="key">Vídeo CXLM: locales</td><td class="dur">12'</td><td class="vm">Solo informativo y puntual. En vMix no cambia nada salvo indicación expresa o escrita</td></tr>
+              <tr><td class="time" data-off="62">--:--</td><td class="key">Mensaje + llamado</td><td class="dur">40'</td><td class="vm">El realizador inicia la grabación del ATEM cuando empieza la predicación</td></tr>
+              <tr><td class="time" data-off="102">--:--</td><td class="key">Biblia + despedida</td><td class="dur">2'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr><td class="time" data-off="104">--:--</td><td class="key">Canción final</td><td class="dur">3'</td><td class="vm"><span class="todo">Por completar</span></td></tr>
+              <tr><td class="time" data-off="107">--:--</td><td class="key">Salida</td><td class="dur"></td><td class="vm">Termina con WALK OUT (12) y sigue <a href="#durante">Al terminar</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="block" id="escaletas">
+        <h3>Escaletas de cada domingo</h3>
+        <p class="muted">Aquí se guardan los PDF de las escaletas, del más reciente al más antiguo.</p>
+        <div class="esc-list" id="esc-list" aria-live="polite"></div>
+      </div>
+      <div class="note">
+        <span class="label">Qué cambia cada semana</span>
+        <p>Las canciones, quién lidera y quién predica, los vídeos y los anuncios cambian cada domingo. La estructura y los tiempos se repiten. Esta escaleta parte de la del 01/11/2026.</p>
+      </div>
+      <div class="note">
+        <span class="label">Siguiente paso</span>
+        <p>Para arrancar y cerrar con el directo, sigue <a href="#durante">Durante el servicio</a>.</p>
+      </div>
+    </section>
+
+    <!-- FALLA -->
+    <section id="s-falla" data-r="falla" data-label="Si algo falla" hidden>
+      <div class="block">
+        <h2>Si algo falla</h2>
+        <p>Busca lo que ves y prueba primero lo más sencillo. Es un borrador basado en cómo está montado el sistema: faltan los fallos reales que ya han pasado para completarlo.</p>
+      </div>
+      <div class="finder">
+        <input id="q-falla" type="search" placeholder="Filtrar fallos: sonido, Instagram, offline…" aria-label="Filtrar fallos" autocomplete="off">
+        <button class="btn" id="q-falla-clear" type="button">Limpiar</button>
+      </div>
+      <div class="faults" id="faults">
+        <details><summary>La cámara principal no se ve (la fuente 2 dice «Offline»)</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Mira que el ATEM está enchufado y encendido. Debe estar conectado antes de abrir vMix.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Vuelve a elegir el dispositivo en los ajustes de la fuente 2 y, si no aparece, reinicia vMix con el ATEM ya conectado. Mientras tanto, saca el bucle WALK OUT (12).</p></div></div></details>
+        <details><summary>Falla la imagen de un Mac mini (fuente 3 o 31) o el NDI se queda colgado en las letras o en un vídeo</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Si está en el directo, pasa a BACKUP SIN AV (5) hasta que se arregle. Comprueba que el Mac mini está encendido, emitiendo y en la misma red.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Vuelve a elegir la fuente en vMix y reinicia la emisión en el Mac mini.</p></div></div></details>
+        <details><summary>No suena en la sala</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Mira que el bus A (Auditorio) no esté silenciado.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Comprueba que la fuente no está silenciada ni a cero y que la interfaz de audio UMC404HD está encendida.</p></div></div></details>
+        <details><summary>No suena en YouTube ni en la grabación</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>En el mezclador, la fuente no debe estar silenciada ni a cero y debe llevar la M activada.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Mira que el volumen general (Master) está subido.</p></div></div></details>
+        <details><summary>No suena en Instagram</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>La fuente debe llevar la B activada (Audio General y el Mac mini AV 2 ya la llevan).</p></div>
+          <div><span class="label">Si sigue igual</span><p>Comprueba que su volumen no está a cero.</p></div></div></details>
+        <details><summary>Instagram no arranca</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Crea una clave nueva en Instagram: normalmente solo sirve para un directo.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Pégala en el Stream 2 y vuelve a darle a Start.</p></div></div></details>
+        <details><summary>YouTube no arranca o se corta</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Comprueba que el servicio está agendado y que la clave es la suya.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Abre View Status. Los dos streams necesitan unos 20 Mbps libres de subida.</p></div></div></details>
+        <details><summary>La imagen va a saltos</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Mira la franja de abajo de vMix: los números de CPU y render no deben dispararse.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Pausa o cierra las fuentes que no uses. Hay varios vídeos en bucle que consumen aunque no se vean.</p></div></div></details>
+        <details><summary>La grabación falla o se para</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Comprueba que Google Drive (<code>G:</code>) está abierto y con espacio.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Graba en un disco del PC y copia después.</p></div></div></details>
+        <details><summary>Las pantallas laterales salen en negro</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Mira que el botón Fullscreen de arriba está activo.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Comprueba que el monitor está conectado y la salida elegida en Settings &gt; Display.</p></div></div></details>
+        <details><summary>El sonido va desfasado respecto a la imagen</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Es un retardo entre fuentes.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Ajusta el retardo de audio (Audio Delay) en la fuente afectada.</p></div></div></details>
+        <details><summary>vMix se cierra o el PC se reinicia</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Reabre vMix y usa <strong>Preset &gt; Last</strong>.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Revisa la cámara (fuente 2) y lanza de nuevo Record y Stream.</p></div></div></details>
+        <details><summary>El archivo del ATEM no llega a Google Drive</summary>
+          <div class="fix"><div><span class="label">Prueba primero</span><p>Abre ATEM Setup en el PC y pulsa <strong>Show in file explorer</strong>: el PC tiene que ver el SSD del ATEM (<code>\\ATEM-Mini-Extreme-ISO\SSD_TV</code>). Sin eso, el automatismo no detecta la carpeta.</p></div>
+          <div><span class="label">Si sigue igual</span><p>Comprueba que el automatismo del escritorio está en marcha y que Google Drive sincroniza. Si no funciona, súbelo a mano: copia la grabación desde <code>\\ATEM-Mini-Extreme-ISO\SSD_TV</code> a <code>G:\Unidades compartidas\Equipo Creativo 2026\2026\Hillsong En Linea\Reuniones\Subidos Ordenador</code>.</p></div></div></details>
+      </div>
+      <p class="empty" id="faults-empty" hidden>Ningún fallo coincide. Prueba con otra palabra o mira la <a href="#referencia">Referencia técnica</a>.</p>
+      <div class="note">
+        <span class="label">Si no encuentras tu caso</span>
+        <p>Los ajustes exactos están en la <a href="#referencia">Referencia técnica</a>.</p>
+      </div>
+    </section>
+
+    <!-- COSAS -->
+    <section id="s-cosas" data-r="cosas" data-label="Qué es cada cosa" hidden>
+      <div class="block">
+        <h2>Qué es cada cosa</h2>
+        <p>Primero, la vista general de las 45 fuentes en cuadrícula. Debajo, las mismas agrupadas por lo que quieres hacer. El número es el que aparece en vMix.</p>
+      </div>
+
+      <div class="block" id="vista-inputs">
+        <h3>Vista general: los 45 inputs</h3>
+        <p class="muted">Ordenados por número, como en vMix. Pulsa un grupo para resaltarlo. En los inputs 4, 5 y 6, «= 2 + 3 + 13» indica qué inputs combinan sus capas.</p>
+        <div class="seg" role="group" aria-label="Resaltar un grupo" id="ig-filter"><button type="button" class="chip" data-f="all" aria-pressed="true">Todos</button><button type="button" class="chip" data-f="main" aria-pressed="false">Directo principal</button><button type="button" class="chip" data-f="entry" aria-pressed="false">Entrada y cierre</button><button type="button" class="chip" data-f="lat" aria-pressed="false">Laterales</button><button type="button" class="chip" data-f="ig" aria-pressed="false">Instagram</button><button type="button" class="chip" data-f="baut" aria-pressed="false">Bautizos</button><button type="button" class="chip" data-f="campus" aria-pressed="false">Campus</button><button type="button" class="chip" data-f="otros" aria-pressed="false">Otros</button></div>
+        <div class="ig" id="ig">
+<div class="tile gp-main" data-g="main"><span class="tg">Directo principal</span><span class="tn">1</span><span class="tt">Audio General</span></div>
+<div class="tile gp-main" data-g="main"><span class="tg">Directo principal</span><span class="tn">2</span><span class="tt">Offline - Blackmagic Design</span><span class="ts">Cámara del ATEM</span></div>
+<div class="tile gp-main" data-g="main"><span class="tg">Directo principal</span><span class="tn">3</span><span class="tt">NDI Mac mini de HILLSONG</span><span class="ts">Mac mini AV 2</span></div>
+<div class="tile gp-main" data-g="main"><span class="tg">Directo principal</span><span class="tn">4</span><span class="tt">STREAMING</span><span class="ts">= 2 + 3 + 13</span></div>
+<div class="tile gp-main" data-g="main"><span class="tg">Directo principal</span><span class="tn">5</span><span class="tt">BACKUP SIN AV</span><span class="ts">= 2 + 13</span></div>
+<div class="tile gp-main" data-g="main"><span class="tg">Directo principal</span><span class="tn">6</span><span class="tt">STREAMING NO LOGO 10H</span><span class="ts">= 2 + 3</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">7</span><span class="tt">SALA BIENVENIDA CHYRON</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">8</span><span class="tt">CORTINILLA</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">9</span><span class="tt">EN DIRECTO</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">10</span><span class="tt">TEMPORIZADOR</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">11</span><span class="tt">WALK IN</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">12</span><span class="tt">WALK OUT</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">13</span><span class="tt">LOGO HILLSONG</span></div>
+<div class="tile gp-entry" data-g="entry"><span class="tg">Entrada y cierre</span><span class="tn">14</span><span class="tt">SALA BIENVENIDA CHYRON</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">15</span><span class="tt">Virtual - LATERALES</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">16</span><span class="tt">LATERALES</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">17</span><span class="tt">NEUTRO 1</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">18</span><span class="tt">NEUTRO 2</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">19</span><span class="tt">NEUTRO 3</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">20</span><span class="tt">VIDEO 1 – Pantallas laterales_Mundial</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">21</span><span class="tt">Chyron Juan Mejías</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">22</span><span class="tt">LATERAL MIX</span><span class="ts">Mix 2</span></div>
+<div class="tile gp-otros" data-g="otros"><span class="tg">Otros</span><span class="tn">23</span><span class="tt">Black</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">24</span><span class="tt">Chyron Damsy Mich</span></div>
+<div class="tile gp-lat" data-g="lat"><span class="tg">Laterales</span><span class="tn">25</span><span class="tt">Chyron los dos</span></div>
+<div class="tile gp-ig" data-g="ig"><span class="tg">Instagram</span><span class="tn">26</span><span class="tt">Instagram fondo</span></div>
+<div class="tile gp-ig" data-g="ig"><span class="tg">Instagram</span><span class="tn">27</span><span class="tt">PGM a IG</span></div>
+<div class="tile gp-ig" data-g="ig"><span class="tg">Instagram</span><span class="tn">28</span><span class="tt">PLANO CORTO</span></div>
+<div class="tile gp-ig" data-g="ig"><span class="tg">Instagram</span><span class="tn">29</span><span class="tt">PLANO GENERAL</span></div>
+<div class="tile gp-ig" data-g="ig"><span class="tg">Instagram</span><span class="tn">30</span><span class="tt">INSTAGRAM MIX</span><span class="ts">Mix 3</span></div>
+<div class="tile gp-main" data-g="main"><span class="tg">Directo principal</span><span class="tn">31</span><span class="tt">NDI Mac mini de AV</span><span class="ts">Mac mini AV</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">32</span><span class="tt">MADRID</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">33</span><span class="tt">VALENCIA</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">34</span><span class="tt">Máscara BCN-MAD</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">35</span><span class="tt">Máscara BCN-VLC</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">36</span><span class="tt">Máscara MAD-BCN</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">37</span><span class="tt">Máscara MAD-VLC</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">38</span><span class="tt">Máscara VLC-MAD</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">39</span><span class="tt">Máscara VLC-BCN</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">40</span><span class="tt">Máscara Muestra Espacios</span></div>
+<div class="tile gp-campus" data-g="campus"><span class="tg">Campus</span><span class="tn">41</span><span class="tt">Máscara En Línea</span></div>
+<div class="tile gp-baut" data-g="baut"><span class="tg">Bautizos</span><span class="tn">42</span><span class="tt">CAM 3</span></div>
+<div class="tile gp-baut" data-g="baut"><span class="tg">Bautizos</span><span class="tn">43</span><span class="tt">CAM 4</span></div>
+<div class="tile gp-baut" data-g="baut"><span class="tg">Bautizos</span><span class="tn">44</span><span class="tt">COMPO BAUT</span></div>
+<div class="tile gp-baut" data-g="baut"><span class="tg">Bautizos</span><span class="tn">45</span><span class="tt">Mix Bautizo</span><span class="ts">Mix 4</span></div>
+        </div>
+      </div>
+
+      <div class="block"><h3>El directo principal</h3>
+        <div class="note"><span class="label">Inputs 4, 5 y 6: presets</span><p>Son presets que combinan las capas de otros inputs: <strong>4 STREAMING</strong> = inputs 2 + 3 + 13 · <strong>5 BACKUP SIN AV</strong> = 2 + 13 · <strong>6 STREAMING NO LOGO</strong> = 2 + 3. Recuerda: 2 es la cámara del ATEM, 3 el Mac mini AV 2 y 13 el logo.</p></div>
+        <div class="tw"><table><thead><tr><th class="num">Nº</th><th>Nombre</th><th>Para qué sirve</th></tr></thead><tbody>
+          <tr><td class="num">4</td><td class="key">STREAMING</td><td>Preset: la escena principal. Combina las capas de los inputs 2 (cámara del ATEM), 3 (Mac mini AV 2) y 13 (logo)</td></tr>
+          <tr><td class="num">6</td><td class="key">STREAMING NO LOGO 10H</td><td>Preset: combina las capas de los inputs 2 y 3, sin logo. Se usa puntualmente, según convenga</td></tr>
+          <tr><td class="num">5</td><td class="key">BACKUP SIN AV</td><td>Preset: combina las capas de los inputs 2 y 13, sin lo que llega del Mac mini AV 2. Es el respaldo si el NDI se cuelga en las letras o en un vídeo</td></tr>
+          <tr><td class="num">2</td><td class="key">Offline - Blackmagic Design</td><td>El ATEM, que entra a vMix como dispositivo Blackmagic. Pone «Offline» si el ATEM no estaba enchufado al abrir vMix</td></tr>
+          <tr><td class="num">3</td><td class="key">NDI Mac mini de HILLSONG</td><td>Entrada NDI del Mac mini AV 2: las letras de la alabanza y los videoanuncios</td></tr>
+          <tr><td class="num">31</td><td class="key">NDI Mac mini de AV</td><td>Entrada NDI del Mac mini AV</td></tr>
+          <tr><td class="num">1</td><td class="key">Audio General</td><td>El sonido principal</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block"><h3>Entrada, espera y cierre</h3>
+        <div class="tw"><table><thead><tr><th class="num">Nº</th><th>Nombre</th><th>Para qué sirve</th></tr></thead><tbody>
+          <tr><td class="num">11</td><td class="key">WALK IN</td><td>Bucle de 8 segundos para la entrada de la gente</td></tr>
+          <tr><td class="num">12</td><td class="key">WALK OUT</td><td>Bucle de 8 segundos para la salida. Es como se guarda el archivo</td></tr>
+          <tr><td class="num">7 y 14</td><td class="key">SALA BIENVENIDA CHYRON</td><td>Pantalla de espera de unos 5 minutos con nombres</td></tr>
+          <tr><td class="num">10</td><td class="key">TEMPORIZADOR</td><td>Cuenta atrás de 5 minutos</td></tr>
+          <tr><td class="num">8</td><td class="key">CORTINILLA</td><td>Entrada del programa</td></tr>
+          <tr><td class="num">9</td><td class="key">EN DIRECTO</td><td>Rótulo de que estamos en directo</td></tr>
+          <tr><td class="num">13</td><td class="key">LOGO HILLSONG</td><td>El logo, que se pone sobre las escenas</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block"><h3>Pantallas laterales de la sala</h3>
+        <div class="tw"><table><thead><tr><th class="num">Nº</th><th>Nombre</th><th>Para qué sirve</th></tr></thead><tbody>
+          <tr><td class="num">22</td><td class="key">LATERAL MIX</td><td>La mini mesa que decide qué sale en las laterales</td></tr>
+          <tr><td class="num">17, 18, 19</td><td class="key">NEUTRO 1, 2 y 3</td><td>Fondos tranquilos</td></tr>
+          <tr><td class="num">20</td><td class="key">VIDEO 1 – Pantallas laterales_Mundial</td><td>Vídeo de un minuto en bucle</td></tr>
+          <tr><td class="num">21, 24, 25</td><td class="key">Chyron Juan Mejías, Damsy Mich y los dos</td><td>Rótulos con nombres</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block"><h3>Instagram (vertical)</h3>
+        <div class="tw"><table><thead><tr><th class="num">Nº</th><th>Nombre</th><th>Para qué sirve</th></tr></thead><tbody>
+          <tr><td class="num">30</td><td class="key">INSTAGRAM MIX</td><td>La mini mesa que decide el plano de Instagram</td></tr>
+          <tr><td class="num">28</td><td class="key">PLANO CORTO</td><td>Cámara cerca, con logo y rótulo</td></tr>
+          <tr><td class="num">29</td><td class="key">PLANO GENERAL</td><td>El programa en pequeño sobre el fondo</td></tr>
+          <tr><td class="num">26</td><td class="key">Instagram fondo</td><td>El fondo vertical</td></tr>
+          <tr><td class="num">27</td><td class="key">PGM a IG</td><td>El programa que llega a Instagram</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block"><h3>Bautizos</h3>
+        <div class="tw"><table><thead><tr><th class="num">Nº</th><th>Nombre</th><th>Para qué sirve</th></tr></thead><tbody>
+          <tr><td class="num">45</td><td class="key">Mix Bautizo</td><td>La mini mesa de bautizos. Sale por la salida 3 hacia el LED wall (solo en bautismos) y también dentro de STREAMING</td></tr>
+          <tr><td class="num">44</td><td class="key">COMPO BAUT</td><td>Dos cámaras a pantalla partida y centradas: CAM 3 a la izquierda y CAM 4 a la derecha</td></tr>
+          <tr><td class="num">42 y 43</td><td class="key">CAM 3 y CAM 4</td><td>Las dos cámaras de bautizo. Es la misma señal que va al ATEM, duplicada y entrando por una capturadora (montaje temporal)</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block"><h3>Conexión con otros campus</h3>
+        <div class="note"><span class="label">Se explicará más adelante</span><p>Los inputs 32 a 41 son los de la conexión con otros campus: 32 y 33 (MADRID y VALENCIA) y las máscaras 34 a 41. Cómo se usan se redactará más adelante.</p></div></div>
+
+      <div class="block"><h3>Otros</h3>
+        <div class="tw"><table><thead><tr><th class="num">Nº</th><th>Nombre</th><th>Para qué sirve</th></tr></thead><tbody>
+          <tr><td class="num">15 y 16</td><td class="key">Virtual - LATERALES y LATERALES</td><td>Fondos de apoyo para las laterales</td></tr>
+          <tr><td class="num">23</td><td class="key">Black</td><td>Pantalla en negro</td></tr>
+        </tbody></table></div></div>
+
+      <p class="muted">Detalle técnico de cada fuente: <a href="#referencia">Referencia técnica</a>.</p>
+    </section>
+
+    <!-- COMO -->
+    <section id="s-como" data-r="como" data-label="Cómo funciona" hidden>
+      <div class="block">
+        <h2>Cómo funciona todo esto</h2>
+        <p>Todo pasa por un PC con el programa vMix, que funciona como una mesa de mezclas de vídeo: recibe imágenes de varios sitios, decide cuál se ve y la reparte a las pantallas y al directo.</p>
+      </div>
+
+      <div class="block">
+        <h3>El recorrido de la imagen</h3>
+        <p class="muted">Cada cable es un recorrido: lo que entra a la izquierda se prepara en vMix (centro) y sale a la derecha. El primero, la escena STREAMING, es lo que ve el público en YouTube.</p>
+        <div class="lanes" role="group" aria-label="Rutas de señal">
+          <div class="lane" style="--cable: var(--c1)">
+            <div class="lane-name"><i></i>Programa</div>
+            <div class="lane-body">
+              <div class="ports"><div class="port">Cámara del ATEM (2)</div><div class="port">Mac mini AV 2 (3)</div><div class="port">Mac mini AV (31)</div><div class="port">Audio General (1)</div></div>
+              <div class="cable"></div>
+              <div class="core">STREAMING (4)</div>
+              <div class="cable"></div>
+              <div class="ports"><div class="port">YouTube · Stream 1</div><div class="port">Grabación en disco</div><div class="port">Pantalla de salida (Fullscreen 1)</div></div>
+            </div>
+          </div>
+          <div class="lane" style="--cable: var(--c5)">
+            <div class="lane-name"><i></i>Bautizos</div>
+            <div class="lane-body">
+              <div class="ports"><div class="port">CAM 3 (42)</div><div class="port">CAM 4 (43)</div></div>
+              <div class="cable"></div>
+              <div class="core">COMPO BAUT (44) → Mix Bautizo (45)</div>
+              <div class="cable"></div>
+              <div class="ports"><div class="port">Salida 3 · LED wall</div><div class="port">Dentro de STREAMING</div></div>
+            </div>
+          </div>
+          <div class="lane" style="--cable: var(--c3)">
+            <div class="lane-name"><i></i>Pantallas laterales</div>
+            <div class="lane-body">
+              <div class="ports"><div class="port">NEUTRO 1, 2 y 3 (17–19)</div><div class="port">Vídeo de laterales (20)</div><div class="port">Chyrons con nombres (21, 24, 25)</div></div>
+              <div class="cable"></div>
+              <div class="core">LATERAL MIX (22)</div>
+              <div class="cable"></div>
+              <div class="ports"><div class="port">Pantallas laterales (Fullscreen 2)</div></div>
+            </div>
+          </div>
+          <div class="lane" style="--cable: var(--c2)">
+            <div class="lane-name"><i></i>Instagram</div>
+            <div class="lane-body">
+              <div class="ports"><div class="port">PLANO CORTO (28)</div><div class="port">PLANO GENERAL (29)</div><div class="port">Fondo vertical (26)</div><div class="port">PGM a IG (27)</div></div>
+              <div class="cable"></div>
+              <div class="core">INSTAGRAM MIX (30)</div>
+              <div class="cable"></div>
+              <div class="ports"><div class="port">Salida 4, en vertical</div><div class="port">Instagram · Stream 2</div></div>
+            </div>
+          </div>
+        </div>
+        <p class="muted">El sonido va aparte: Master al directo y a la grabación, A (Auditorio) a la sala por la interfaz UMC404HD y B (Conexión) a Instagram.</p>
+      </div>
+
+      <div class="block"><h3>Quién hace qué</h3>
+        <div class="tw"><table><thead><tr><th>Pieza</th><th>Para qué sirve</th></tr></thead><tbody>
+          <tr><td class="key">PC con vMix</td><td>Es la mesa de mezclas: decide qué se ve y qué se oye</td></tr>
+          <tr><td class="key">CAM 3 y CAM 4</td><td>La señal de las cámaras duplicada: una copia va al ATEM y otra al PC por una capturadora. Es un montaje temporal para los bautismos</td></tr>
+          <tr><td class="key">Mac mini AV 2 y Mac mini AV</td><td>Dos equipos distintos que envían imagen al PC por NDI, con cable Ethernet y a través de un switch. El AV 2 (fuente 3) envía las letras de la alabanza y los videoanuncios. El AV (fuente 31) envía su imagen y además recibe del PC la mezcla de bautismos y la saca por la LED wall</td></tr>
+          <tr><td class="key">LED wall</td><td>La pantalla grande de la sala. La alimenta el Mac mini AV con la señal que le llega del PC por NDI</td></tr>
+          <tr><td class="key">Interfaz de audio UMC404HD</td><td>Es la tarjeta de sonido del PC: recibe por XLR la mezcla general de la mesa de sonido (músicos y micros) y la pasa al PC por USB</td></tr>
+          <tr><td class="key">Pantallas laterales</td><td>Monitor de referencia, TV de la sala de familias y TV del overflow. Reciben el LATERAL MIX (fondos y nombres de las personas) por un splitter HDMI</td></tr>
+          <tr><td class="key">YouTube e Instagram</td><td>Donde se emite el directo (Instagram, en vertical)</td></tr>
+          <tr><td class="key">ATEM</td><td>ATEM Mini Extreme ISO de Blackmagic. Entra al PC por USB-C como fuente 2 y graba en su propio SSD, que el PC ve por la red. Un automatismo del PC copia el archivo a la carpeta «Subidos Ordenador» de Google Drive</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block"><h3>Palabras que verás</h3>
+        <div class="tw"><table><thead><tr><th>Palabra</th><th>Qué significa</th></tr></thead><tbody>
+          <tr><td class="key">Input o fuente</td><td>Cada cosa que vMix puede sacar: una cámara, un vídeo, un gráfico. Aquí hay 45.<span class="tech"><b>Técnico</b>Entrada numerada de vMix. Puede ser captura de un dispositivo, NDI, SRT, vídeo, título, mix o escena; cada una con su propio audio y sus capas.</span></td></tr>
+          <tr><td class="key">Preview y Program</td><td><span class="g">Preview (verde)</span> es lo que está preparado. <span class="r">Program (rojo)</span> es lo que ve el público.<span class="tech"><b>Técnico</b>Cada mix tiene su par Preview/Program y una transición los intercambia. El Program del mix principal alimenta Stream, Record y las salidas Output.</span></td></tr>
+          <tr><td class="key">Escena</td><td>Una fuente formada por varias piezas apiladas, por ejemplo cámara, gráficos y logo.<span class="tech"><b>Técnico</b>Un input con varias capas. Cada capa apunta a otra fuente y se puede recortar, escalar y colocar. STREAMING (4), BACKUP SIN AV (5) y STREAMING NO LOGO (6) son escenas de este tipo: combinan las capas de los inputs 2, 3 y 13.</span></td></tr>
+          <tr><td class="key">Capa</td><td>Cada pieza apilada dentro de una escena.<span class="tech"><b>Técnico</b>Layer. Un input tiene hasta 10 capas, cada una con posición, tamaño, recorte y transparencia propios.</span></td></tr>
+          <tr><td class="key">Overlay</td><td>Un gráfico que se pone encima sin quitar lo de fondo, como EN DIRECTO.<span class="tech"><b>Técnico</b>Canal de superposición sobre el Program: no cambia el input de fondo. Aquí: Overlay 1 = EN DIRECTO (9) y Overlay 2 = CORTINILLA (8).</span></td></tr>
+          <tr><td class="key">Mix</td><td>Una «mini mesa de mezclas» dentro de vMix para preparar otra pantalla (laterales, Instagram o bautizos).<span class="tech"><b>Técnico</b>Mezcla secundaria con su propio Preview/Program. Sirve como input dentro del mix principal o como salida independiente. Aquí: Mix 2, 3 y 4.</span></td></tr>
+          <tr><td class="key">Chyron</td><td>Rótulo con un nombre que sale en pantalla.<span class="tech"><b>Técnico</b>Término de televisión para el generador de caracteres (CG): texto editable superpuesto al vídeo.</span></td></tr>
+          <tr><td class="key">NDI</td><td>Forma de enviar vídeo entre equipos de la misma red.<span class="tech"><b>Técnico</b>Network Device Interface. Vídeo y audio comprimidos sobre IP en red local, con poca latencia. Cada emisor aparece solo como fuente en vMix. Necesita una red Ethernet de al menos 1 Gb/s.</span></td></tr>
+          <tr><td class="key">SRT</td><td>Forma de enviar vídeo por Internet de manera estable. Los Outputs de vMix también emiten por SRT.<span class="tech"><b>Técnico</b>Secure Reliable Transport. Funciona sobre UDP, reenvía los paquetes perdidos y puede cifrar. Un extremo escucha (listener) y el otro llama (caller). La latencia configurable absorbe los cortes de red.</span></td></tr>
+          <tr><td class="key">RTMP y RTMPS</td><td>El camino por el que vMix entrega el directo a YouTube e Instagram.<span class="tech"><b>Técnico</b>Protocolo de envío de streams. RTMPS es la versión cifrada. Hace falta la dirección del servidor y la clave de directo de cada plataforma.</span></td></tr>
+          <tr><td class="key">Bus de audio</td><td>Un grupo de sonido que va a un sitio. Master va al directo y la grabación, A (Auditorio) va a la sala y B (Conexión) va a Instagram.<span class="tech"><b>Técnico</b>Ruta de mezcla con su propio nivel. Cada fuente decide a qué buses envía con los botones M, A y B.</span></td></tr>
+          <tr><td class="key">Fader, ganancia y mute</td><td>El volumen de una fuente y su botón de silencio.<span class="tech"><b>Técnico</b>El fader ajusta el nivel en dB (0 dB no cambia nada). La ganancia (Gain) sube la señal de entrada antes del fader. Mute silencia la fuente entera.</span></td></tr>
+          <tr><td class="key">Retardo de audio</td><td>Un ajuste para que el sonido y la imagen vayan a la vez.<span class="tech"><b>Técnico</b>Audio Delay. Desplaza el audio unos milisegundos para compensar fuentes que llegan con retardo, como NDI o SRT.</span></td></tr>
+          <tr><td class="key">1080p50</td><td>El formato en el que trabaja vMix: todas las fuentes se adaptan a él.<span class="tech"><b>Técnico</b>1920×1080 píxeles y 50 imágenes completas (progresivas) por segundo.</span></td></tr>
+          <tr><td class="key">Códec y bitrate</td><td>Cómo se comprime el vídeo y cuánto ocupa por segundo.<span class="tech"><b>Técnico</b>El códec comprime (AV1, HEVC, H.264) y el bitrate marca los Mbps. Más bitrate da más calidad y gasta más subida. Aquí: AV1 a YouTube, H.264 a Instagram y HEVC en la grabación.</span></td></tr>
+          <tr><td class="key">Stream y Record</td><td>Stream emite en directo. Record graba en el disco.<span class="tech"><b>Técnico</b>Los dos codifican el Program por separado (FFMPEG con el codificador de la gráfica). Stream 1: 1440p a 13,5 Mbps. Stream 2: 1080p a 6 Mbps. Record: 1440p50 a 20 Mbps.</span></td></tr>
+          <tr><td class="key">Fullscreen</td><td>Salida a pantalla completa, por ejemplo hacia las pantallas laterales.<span class="tech"><b>Técnico</b>Salida de vídeo por la tarjeta gráfica a un monitor o proyector, elegido por número de pantalla. Fullscreen 1 = programa (pantalla 3). Fullscreen 2 = Mix 2 (laterales).</span></td></tr>
+        </tbody></table></div></div>
+    </section>
+
+    <!-- ESQUEMAS -->
+    <section id="s-esquemas" data-r="esquemas" data-label="Esquemas de conexión" hidden>
+      <div class="block">
+        <h2>Esquemas de conexión</h2>
+        <p>Cómo se conecta cada equipo y por dónde viaja cada señal. El esquema físico muestra los cables y los equipos; el virtual, lo que pasa dentro de vMix y por la red.</p>
+        <div class="jumps">
+          <button type="button" data-jump="esq-fisico">Conexiones físicas</button>
+          <button type="button" data-jump="esq-virtual">Conexiones virtuales</button>
+        </div>
+      </div>
+      <div class="legend" aria-label="Leyenda"><div class="lg t-video"><i class="line"></i><span>Vídeo y cables de imagen</span></div><div class="lg t-red"><i class="line"></i><span>Red y NDI</span></div><div class="lg t-audio"><i class="line"></i><span>Audio</span></div><div class="lg t-datos"><i class="line"></i><span>Datos y USB</span></div><div class="lg t-inet"><i class="line"></i><span>Internet, SRT y RTMPS</span></div><div class="lg t-video pend"><i class="line"></i><span>Por confirmar</span></div></div>
+      <div class="note"><span class="label">Por confirmar</span><p>Las líneas discontinuas y los equipos con «?» son datos que todavía faltan. Se irán completando con vuestras respuestas.</p></div>
+
+      <div class="block" id="esq-fisico">
+        <h3>Físico: equipos y cables</h3>
+        <div class="chains">
+          <div class="chainbox t-video"><div class="lane-name"><i></i>Imagen principal</div><div class="chain"><div class="node"><b>Cámaras</b><span>Las del escenario</span></div><div class="link t-video"><span>HDMI</span><i class="line"></i></div><div class="node"><b>ATEM</b><span>ATEM Mini Extreme ISO</span></div><div class="link t-video"><span>USB-C</span><i class="line"></i></div><div class="node"><b>PC vMix</b><span>Fuente 2 «Offline - Blackmagic Design»</span></div></div></div>
+          <div class="chainbox t-datos"><div class="lane-name"><i></i>Grabación del ATEM</div><div class="chain"><div class="node"><b>ATEM</b><span>ATEM Mini Extreme ISO · SSD propio</span></div><div class="link t-red"><span>Red · Show in file explorer</span><i class="line"></i></div><div class="node"><b>PC</b><span>Explorador de Windows</span><span>\\ATEM-Mini-Extreme-ISO\SSD_TV</span></div><div class="link t-datos"><span>Automatismo del escritorio</span><i class="line"></i></div><div class="node"><b>Carpeta «Subidos Ordenador»</b><span>Google Drive (G:)</span></div></div></div>
+          <div class="chainbox t-video"><div class="lane-name"><i></i>Cámaras de bautizo (montaje temporal)</div><div class="chain"><div class="node"><b>Cámaras</b><span>La misma señal que va al ATEM, duplicada</span></div><div class="link t-video"><span>HDMI</span><i class="line"></i></div><div class="node"><b>Capturadora</b><span>Modelo ?</span></div><div class="link t-video pend"><span>USB o PCIe ?</span><i class="line"></i></div><div class="node"><b>PC vMix</b><span>Fuentes 42 y 43 · CAM 3 y CAM 4</span></div></div></div>
+          <div class="chainbox t-red"><div class="lane-name"><i></i>Mac mini</div><div class="chain"><div class="node"><b>Mac mini AV y Mac mini AV 2</b><span>Emiten por NDI</span></div><div class="link t-red"><span>Ethernet</span><i class="line"></i></div><div class="node"><b>Switch</b><span>Red del recinto</span></div><div class="link t-red"><span>Ethernet</span><i class="line"></i></div><div class="node"><b>PC vMix</b><span>Ethernet Intel I225-V</span></div></div></div>
+          <div class="chainbox t-red"><div class="lane-name"><i></i>Pantalla LED (solo en bautismos)</div><div class="chain"><div class="node"><b>PC vMix</b><span>Output 3 · mix de bautismos</span></div><div class="link t-red"><span>Ethernet · NDI</span><i class="line"></i></div><div class="node"><b>Switch</b><span>Red del recinto</span></div><div class="link t-red"><span>Ethernet</span><i class="line"></i></div><div class="node"><b>Mac mini AV</b><span>Recibe el NDI</span></div><div class="link t-video pend"><span>Cable ?</span><i class="line"></i></div><div class="node"><b>LED wall</b></div></div></div>
+          <div class="chainbox t-audio"><div class="lane-name"><i></i>Sonido hacia el PC</div><div class="chain"><div class="node"><b>Mesa de sonido</b><span>Mezcla general: músicos y micros</span></div><div class="link t-audio"><span>XLR</span><i class="line"></i></div><div class="node"><b>UMC404HD</b><span>Tarjeta de sonido</span></div><div class="link t-audio"><span>USB</span><i class="line"></i></div><div class="node"><b>PC vMix</b><span>Input 1 · Audio General</span></div></div></div>
+          <div class="chainbox t-audio"><div class="lane-name"><i></i>Sonido hacia la sala</div><div class="chain"><div class="node"><b>PC vMix</b><span>Bus A «Auditorio»</span></div><div class="link t-audio"><span>USB</span><i class="line"></i></div><div class="node"><b>UMC404HD</b><span>Salida, canal 3</span></div><div class="link t-audio pend"><span>Audio ?</span><i class="line"></i></div><div class="node pend"><b>Sala ?</b><span>Amplificación y altavoces</span></div></div></div>
+          <div class="chainbox t-video"><div class="lane-name"><i></i>Monitores de control</div><div class="chain"><div class="node"><b>PC vMix</b><span>Tarjeta gráfica RTX 4060 Ti</span></div><div class="link t-video"><span>DisplayPort</span><i class="line"></i></div><div class="node"><b>Monitores del PC</b><span>Dos monitores</span></div></div></div>
+          <div class="chainbox t-video"><div class="lane-name"><i></i>Retorno al ATEM</div><div class="chain"><div class="node"><b>PC vMix</b><span>Fullscreen 1 · programa</span></div><div class="link t-video"><span>HDMI</span><i class="line"></i></div><div class="node"><b>ATEM</b><span>Entrada 8</span></div></div></div>
+          <div class="chainbox t-video"><div class="lane-name"><i></i>Pantallas de la sala</div><div class="chain"><div class="node"><b>PC vMix</b><span>Fullscreen 2 · LATERAL MIX (22)</span></div><div class="link t-video"><span>DisplayPort + adaptador a HDMI</span><i class="line"></i></div><div class="node"><b>Splitter HDMI</b></div><div class="link t-video"><span>HDMI</span><i class="line"></i></div><div class="node multi"><b>Pantallas laterales</b><span>Monitor de referencia</span><span>TV de la sala de familias</span><span>TV del overflow</span></div></div></div>
+          <div class="chainbox t-inet"><div class="lane-name"><i></i>Internet</div><div class="chain"><div class="node"><b>PC vMix</b><span>Ethernet</span></div><div class="link t-red"><span>Ethernet</span><i class="line"></i></div><div class="node pend"><b>Router del recinto ?</b></div><div class="link t-inet"><span>Subida de 20 Mbps o más</span><i class="line"></i></div><div class="node multi"><b>Internet</b><span>YouTube</span><span>Instagram (Meta)</span></div></div></div>
+        </div>
+      </div>
+
+      <div class="block" id="esq-virtual">
+        <h3>Virtual: vMix y red</h3>
+        <p class="muted">Cada fila es un recorrido de software. Los números son los de las fuentes de vMix.</p>
+        <div class="chains">
+          <div class="chainbox t-red"><div class="lane-name"><i></i>NDI entrante</div><div class="chain"><div class="node"><b>Mac mini AV 2 y Mac mini AV</b><span>Emisores NDI</span></div><div class="link t-red"><span>NDI</span><i class="line"></i></div><div class="node"><b>Inputs NDI</b><span>3 y 31</span></div><div class="link t-video"><span>Capas</span><i class="line"></i></div><div class="node"><b>Escena STREAMING (4)</b><span>Cámara, gráficos y logo</span></div></div></div>
+          <div class="chainbox t-video"><div class="lane-name"><i></i>El programa</div><div class="chain"><div class="node"><b>Programa</b><span>Mix principal, escena STREAMING (4)</span></div><div class="link t-video"><span>Program</span><i class="line"></i></div><div class="node multi"><b>Salidas del programa</b><span>Stream 1 → YouTube (RTMP) · AV1 1440p</span><span>Record → MP4 HEVC 1440p50</span><span>Output 1 · NDI y SRT</span><span>Fullscreen 1 · pantalla de salida</span></div></div></div>
+          <div class="chainbox t-video"><div class="lane-name"><i></i>Pantallas laterales</div><div class="chain"><div class="node"><b>Inputs de laterales</b><span>17 a 21, 24 y 25</span></div><div class="link t-video"><span>Capas</span><i class="line"></i></div><div class="node"><b>Mix 2</b><span>LATERAL MIX (22)</span></div><div class="link t-video"><span>Salida a pantalla</span><i class="line"></i></div><div class="node multi"><b>Pantallas laterales</b><span>Fullscreen 2, vía splitter HDMI</span><span>Monitor de referencia, TV de familias y TV del overflow</span></div></div></div>
+          <div class="chainbox t-inet"><div class="lane-name"><i></i>Instagram</div><div class="chain"><div class="node multi"><b>Inputs de Instagram</b><span>Plano corto (28) y plano general (29), cuando no hay alabanza ni videoanuncios</span><span>PGM a IG (27)</span><span>En la alabanza y los videoanuncios, la imagen NDI del Mac mini AV 2 (3)</span><span>Fondo vertical (26)</span></div><div class="link t-video"><span>Capas</span><i class="line"></i></div><div class="node"><b>Mix 3</b><span>INSTAGRAM MIX (30)</span></div><div class="link t-video"><span>Output 4</span><i class="line"></i></div><div class="node"><b>Output 4</b><span>Vertical Output 4 · NDI y SRT</span></div><div class="link t-inet"><span>RTMPS</span><i class="line"></i></div><div class="node"><b>Instagram</b><span>Stream 2 · RTMPS</span><span>H.264 1080p</span></div></div></div>
+          <div class="chainbox t-video"><div class="lane-name"><i></i>Bautizos (solo en bautismos)</div><div class="chain"><div class="node"><b>CAM 3 y CAM 4</b><span>Fuentes 42 y 43</span></div><div class="link t-video"><span>Pantalla partida</span><i class="line"></i></div><div class="node"><b>COMPO BAUT</b><span>44 · pantalla partida, CAM 3 a la izquierda y CAM 4 a la derecha</span></div><div class="link t-video"><span>Mix</span><i class="line"></i></div><div class="node"><b>Mix 4</b><span>Mix Bautizo (45)</span></div><div class="link t-video"><span>Salida</span><i class="line"></i></div><div class="node multi"><b>Destinos</b><span>Output 3 · NDI → Mac mini AV → LED wall</span><span>Dentro de STREAMING</span></div></div></div>
+          <div class="chainbox t-audio"><div class="lane-name"><i></i>Audio</div><div class="chain"><div class="node multi"><b>Fuentes con sonido</b><span>Audio General (1)</span><span>Mac mini AV 2 (3)</span></div><div class="link t-audio"><span>Envío por fuente</span><i class="line"></i></div><div class="node multi"><b>Buses</b><span>M · Master</span><span>A · Auditorio</span><span>B · Conexión</span></div><div class="link t-audio"><span>Salida de cada bus</span><i class="line"></i></div><div class="node multi"><b>Destinos</b><span>Master → YouTube y grabación</span><span>A → UMC404HD → sala</span><span>B → Instagram</span></div></div></div>
+          <div class="chainbox t-red"><div class="lane-name"><i></i>Outputs NDI y SRT</div><div class="chain"><div class="node multi"><b>Outputs 1 a 4</b><span>1 · Programa</span><span>2 · Sin uso</span><span>3 · Mix de bautismos (normalmente sin uso)</span><span>4 · Mix de Instagram</span></div><div class="link t-red"><span>NDI y SRT</span><i class="line"></i></div><div class="node multi"><b>Quién los recibe</b><span>Output 3 → Mac mini AV (LED wall), solo en bautismos</span><span>Outputs 1, 2 y 4: nadie, quedan como auxiliares</span></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PENDIENTES -->
+    <section id="s-pendientes" data-r="pendientes" data-label="Pendientes" hidden>
+      <div class="block">
+        <h2>Avisos y datos pendientes</h2>
+        <p>La configuración está ordenada y va holgada, pero hay varias cosas que conviene revisar y datos que faltan para terminar la guía.</p>
+      </div>
+
+      <div class="block"><h3>Cosas a revisar</h3>
+        <ol class="steps-ol">
+          <li><div><strong>BIOS del PC antigua.</strong> La BIOS es de mayo de 2024, anterior a las actualizaciones que Intel publicó para la inestabilidad de este tipo de procesadores. Windows registra errores de CPU ya corregidos (28/06, 19/07 y 07/09/2026). No son graves, pero en un equipo de directo compensa actualizar la BIOS.</div></li>
+          <li><div><strong>Versión de Windows.</strong> La 26300.9974 no parece una versión estable habitual. Si es de pruebas (Insider), conviene pasar a una estable.</div></li>
+          <li><div><strong>Grabación en unidad compartida.</strong> El vídeo se graba directamente en <code>G:</code> (Unidades compartidas). Si se corta la red o falta espacio, puede fallar la grabación. Esa carpeta es «Subidos Ordenador», dentro de Google Drive. Es más seguro grabar en el PC y copiar después.</div></li>
+          <li><div><strong>ATEM conectado antes del PC.</strong> La fuente 2 se guardó en «Offline» y es la base de cuatro escenas (4, 5, 6 y 28). Por eso hay que conectar el ATEM antes de encender el PC y abrir vMix.</div></li>
+          <li><div><strong>Arranque con sonido bajo.</strong> El Mac mini AV 2 (fuente 3) está a volumen cero y el Auditorio (A) silenciado. Está bien si es a propósito, pero hay que subirlos al empezar.</div></li>
+        </ol>
+      </div>
+
+      <div class="block"><h3>Datos que faltan</h3>
+        <div class="tw"><table><thead><tr><th>Tema</th><th>Qué haría falta</th></tr></thead><tbody>
+          <tr><td class="key">Pestañas de fuentes</td><td>Qué fuentes hay en DIRECTO, SH 2026, BAUTIZO, INSTAGRAM, CONEX. CAMPUS, LATERALES, MEDIA y S BIENVENIDA, y qué es la pestaña naranja sin nombre</td></tr>
+          <tr><td class="key">Cámaras y capturadoras</td><td>Modelo de la capturadora, cámaras PTZ si las hay y cómo se controlan</td></tr>
+          <tr><td class="key">Mac mini</td><td>Qué envía exactamente el Mac mini AV (fuente 31), qué es «PGM a IG» (27) y qué se ve en Instagram durante la alabanza y los videoanuncios</td></tr>
+          <tr><td class="key">Campus</td><td>Los inputs 32 a 41 (conexión con otros campus): lo redactará el equipo más adelante</td></tr>
+          <tr><td class="key">Salidas</td><td>Detalle de los buses de audio y de los Outputs auxiliares, y si el bus A (Auditorio) llega a la sala</td></tr>
+          <tr><td class="key">Pantallas</td><td>Cómo se conecta el Mac mini AV a la LED wall</td></tr>
+          <tr><td class="key">Sonido</td><td>Mezclador o interfaz de entrada, cableado hacia la UMC404HD y qué hay en cada canal</td></tr>
+          <tr><td class="key">Red</td><td>Direcciones del PC y los Mac mini, switches y ancho de banda de subida del recinto</td></tr>
+          <tr><td class="key">Ajustes sin ver</td><td>Pestañas Decoders, Audio, Web Controller, Tally Lights, Shortcuts, Activators, Scripting y Alerts de Settings</td></tr>
+          <tr><td class="key">Control</td><td>Si se usa Stream Deck, Companion, Web Controller o atajos de teclado</td></tr>
+          <tr><td class="key">Protocolo real</td><td>Cubierto en «Antes del servicio» y «Durante el servicio»; falta revisarlo con quien opera</td></tr>
+          <tr><td class="key">Incidencias</td><td>Fallos que ya han pasado, cómo se resolvieron y los planes B</td></tr>
+        </tbody></table></div></div>
+    </section>
+
+    <!-- REFERENCIA -->
+    <section id="s-referencia" data-r="referencia" data-label="Referencia técnica" hidden>
+      <div class="block">
+        <h2>Referencia técnica</h2>
+        <p>Los ajustes exactos de vMix y del equipo. Direcciones, puertos y claves no se publican aquí.</p>
+        <div class="jumps">
+          <button type="button" data-jump="ref-sistema">Ordenador</button>
+          <button type="button" data-jump="ref-vmix">vMix</button>
+          <button type="button" data-jump="ref-mezclas">Mezclas</button>
+          <button type="button" data-jump="ref-salidas">Salidas</button>
+          <button type="button" data-jump="ref-audio">Audio</button>
+          <button type="button" data-jump="ref-stream">Streaming y grabación</button>
+          <button type="button" data-jump="ref-rutas">Rutas</button>
+        </div>
+      </div>
+
+      <div class="block" id="ref-sistema"><h3>Ordenador y sistema</h3>
+        <div class="tw"><table><thead><tr><th>Pieza</th><th>Detalle</th></tr></thead><tbody>
+          <tr><td class="key">Procesador</td><td>Intel Core i9-13900KF</td></tr>
+          <tr><td class="key">Memoria</td><td>64 GB DDR5 (perfil XMP a 6400)</td></tr>
+          <tr><td class="key">Gráfica</td><td>NVIDIA RTX 4060 Ti, 8 GB</td></tr>
+          <tr><td class="key">Placa base</td><td>MSI MAG Z790 TOMAHAWK WIFI · BIOS H.C1 (14/05/2024)</td></tr>
+          <tr><td class="key">Discos</td><td>NVMe KIOXIA y Samsung</td></tr>
+          <tr><td class="key">Red</td><td>Ethernet Intel I225-V</td></tr>
+          <tr><td class="key">Sistema</td><td>Windows 11 Home, compilación 26300.9974</td></tr>
+          <tr><td class="key">Audio</td><td>Interfaz UMC404HD y auriculares USB Realtek</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block" id="ref-vmix"><h3>vMix</h3>
+        <div class="tw"><table><thead><tr><th>Ajuste</th><th>Valor</th></tr></thead><tbody>
+          <tr><td class="key">Versión</td><td>vMix 4K 29.0.0.50 x64</td></tr>
+          <tr><td class="key">Archivo</td><td>«Hillsong Streaming BCN», en el escritorio</td></tr>
+          <tr><td class="key">Formato</td><td>1080p a 50 fotogramas por segundo</td></tr>
+          <tr><td class="key">Fuentes</td><td>45</td></tr>
+          <tr><td class="key">Overlays</td><td>1 = fuente 9 EN DIRECTO · 2 = fuente 8 CORTINILLA</td></tr>
+          <tr><td class="key">Presets de capas</td><td>4 STREAMING = fuentes 2 + 3 + 13 · 5 BACKUP SIN AV = 2 + 13 · 6 STREAMING NO LOGO = 2 + 3</td></tr>
+          <tr><td class="key">Entradas NDI</td><td>Fuente 3 (Mac mini AV 2) y fuente 31 (Mac mini AV)</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block" id="ref-mezclas"><h3>Mezclas</h3>
+        <div class="tw"><table><thead><tr><th>Mix</th><th>Fuente</th><th>Para qué</th></tr></thead><tbody>
+          <tr><td class="key">Mix 2</td><td>LATERAL MIX (22)</td><td>Pantallas laterales</td></tr>
+          <tr><td class="key">Mix 3</td><td>INSTAGRAM MIX (30)</td><td>Instagram en vertical</td></tr>
+          <tr><td class="key">Mix 4</td><td>Mix Bautizo (45)</td><td>Bautizos</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block" id="ref-salidas"><h3>Salidas</h3>
+        <div class="tw"><table><thead><tr><th>Salida</th><th>Qué lleva</th></tr></thead><tbody>
+          <tr><td class="key">Fullscreen 1</td><td>La salida principal, por la pantalla 3</td></tr>
+          <tr><td class="key">Fullscreen 2</td><td>Mix 2, hacia las pantallas laterales</td></tr>
+          <tr><td class="key">Output 1</td><td>Programa. Sin receptor por ahora: queda como auxiliar</td></tr>
+          <tr><td class="key">Output 2</td><td>Sin uso</td></tr>
+          <tr><td class="key">Output 3</td><td>Mix de bautismos (fuente 45), hacia el Mac mini AV y la LED wall. Normalmente sin uso</td></tr>
+          <tr><td class="key">Output 4</td><td>Mix de Instagram (fuente 30). Sin receptor externo: el Stream 2 lo toma dentro de vMix</td></tr>
+        </tbody></table></div>
+        <p class="muted">Las cuatro salidas Output emiten por NDI y por SRT.</p></div>
+
+      <div class="block" id="ref-audio"><h3>Audio</h3>
+        <div class="tw"><table><thead><tr><th>Elemento</th><th>Ajuste</th></tr></thead><tbody>
+          <tr><td class="key">Master</td><td>Va al directo y a la grabación</td></tr>
+          <tr><td class="key">Bus A «Auditorio»</td><td>Silenciado al guardar. Envía a Master y sale por la UMC404HD, canal 3</td></tr>
+          <tr><td class="key">Bus B «Conexión»</td><td>No envía a Master. Alimenta el stream de Instagram</td></tr>
+          <tr><td class="key">Fuente 1 · Audio General</td><td>Buses M y B · ganancia +7 dB</td></tr>
+          <tr><td class="key">Fuente 3 · Mac mini AV 2</td><td>Buses M y B · fader a 0 · ganancia +9 dB</td></tr>
+        </tbody></table></div></div>
+
+      <div class="block" id="ref-stream"><h3>Streaming y grabación</h3>
+        <div class="tw"><table><thead><tr><th>Destino</th><th>Ajustes</th></tr></thead><tbody>
+          <tr><td class="key">Stream 1 · YouTube Live</td><td>Vídeo AV1, 1440p, 13,5 Mbps · audio AAC 320 kbps</td></tr>
+          <tr><td class="key">Stream 2 · Instagram (Meta)</td><td>RTMPS personalizado · H.264, 1080p, 6 Mbps · audio AAC 256 kbps · sale de «Vertical Output 4»</td></tr>
+          <tr><td class="key">Codificación</td><td>FFMPEG con codificador por hardware</td></tr>
+          <tr><td class="key">Grabación</td><td>MP4 con HEVC, 2560×1440 a 50p, 20 Mbps · audio Master a 384 kbps · se guarda en la carpeta «Subidos Ordenador» de Google Drive (<code>G:</code>)</td></tr>
+        </tbody></table></div></div>
+      <div class="block" id="ref-rutas"><h3>Rutas de las grabaciones</h3>
+        <div class="tw"><table><thead><tr><th>Qué</th><th>Dónde</th></tr></thead><tbody>
+          <tr><td class="key">SSD del ATEM</td><td>En el Explorador de Windows, tras pulsar «Show in file explorer» en ATEM Setup: <code>\\ATEM-Mini-Extreme-ISO\SSD_TV</code></td></tr>
+          <tr><td class="key">Carpeta de las grabaciones</td><td>Google Drive. Es donde graba vMix y donde el automatismo pega la grabación del ATEM: <code>G:\Unidades compartidas\Equipo Creativo 2026\2026\Hillsong En Linea\Reuniones\Subidos Ordenador</code></td></tr>
+          <tr><td class="key">Si el automatismo falla</td><td>Copia a mano el archivo del SSD del ATEM a la carpeta de Google Drive</td></tr>
+        </tbody></table></div></div>
+
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    Guía viva de Hillsong Streaming BCN · Última actualización: 15/11/2026
+  </footer>
+</div>
+
+<script>
+(function () {
+  var ROUTES = ['inicio', 'antes', 'durante', 'escaleta', 'falla', 'cosas', 'como', 'esquemas', 'pendientes', 'referencia'];
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var store = {
+    get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+  };
+  var pending = null;
+
+  /* Rutas */
+  function show() {
+    var id = (location.hash || '').replace('#', '');
+    if (ROUTES.indexOf(id) < 0) id = 'inicio';
+    $$('section[data-r]').forEach(function (s) { s.hidden = s.getAttribute('data-r') !== id; });
+    $$('#tabs a').forEach(function (a) {
+      if (a.getAttribute('data-r') === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    var cur = $('#tabs a[aria-current="page"]');
+    if (cur && cur.scrollIntoView) { try { cur.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {} }
+    if (pending) {
+      var el = pending; pending = null;
+      var d = el.closest ? el.closest('details') : null;
+      if (d) d.open = true;
+      setTimeout(function () {
+        el.scrollIntoView({ block: 'center' });
+        el.classList.add('hit');
+        setTimeout(function () { el.classList.remove('hit'); }, 2200);
+      }, 30);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }
+  window.addEventListener('hashchange', show);
+
+  /* Tema */
+  function effectiveDark() {
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t) return t === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  var saved = store.get('vmix-bcn-theme');
+  if (saved === 'dark' || saved === 'light') document.documentElement.setAttribute('data-theme', saved);
+  $('#theme').addEventListener('click', function () {
+    var next = effectiveDark() ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    store.set('vmix-bcn-theme', next);
+  });
+
+  /* Casillas de «Antes del servicio» */
+  var boxes = $$('#s-antes .checks input');
+  var CK = 'vmix-bcn-checks-v1';
+  var state = {};
+  try { state = JSON.parse(store.get(CK) || '{}') || {}; } catch (e) { state = {}; }
+  function updateCount() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    $('#count').textContent = n + ' de ' + boxes.length + ' pasos';
+  }
+  boxes.forEach(function (b, i) {
+    b.checked = !!state[i];
+    b.addEventListener('change', function () {
+      state[i] = b.checked ? 1 : 0;
+      store.set(CK, JSON.stringify(state));
+      updateCount();
+    });
+  });
+  $('#reset').addEventListener('click', function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    state = {}; store.set(CK, '{}'); updateCount();
+  });
+  updateCount();
+
+  /* Nombre de la grabación */
+  var fDate = $('#f-date'), fPastor = $('#f-pastor'), fTitle = $('#f-title'), fServ = $('#f-serv'), fOut = $('#f-out');
+  var now = new Date();
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  fDate.value = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+  function clean(s) { return s.replace(/[\\\/:*?"<>|_]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function buildName() {
+    var d = (fDate.value || '').split('-');
+    var date = d.length === 3 ? d[2] + d[1] + d[0] : '01012000';
+    var pastor = clean(fPastor.value) || 'Nombre Pastor';
+    var title = clean(fTitle.value) || 'Titulo de la Predica';
+    fOut.textContent = date + '_' + pastor + '_' + title + '_' + fServ.value;
+  }
+  [fDate, fPastor, fTitle, fServ].forEach(function (el) { el.addEventListener('input', buildName); el.addEventListener('change', buildName); });
+  buildName();
+  $('#f-copy').addEventListener('click', function () {
+    var btn = this, txt = fOut.textContent;
+    function ok() { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1600); }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(fOut);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Selecciona y copia'; setTimeout(function () { btn.textContent = 'Copiar'; }, 2200);
+    }
+    try { navigator.clipboard.writeText(txt).then(ok, fallback); } catch (e) { fallback(); }
+  });
+
+  /* Filtro de fallos */
+  var qf = $('#q-falla');
+  function norm(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+  function filterFaults() {
+    var terms = norm(qf.value).split(/\s+/).filter(Boolean);
+    var shown = 0;
+    $$('#faults details').forEach(function (d) {
+      var t = norm(d.textContent);
+      var match = terms.every(function (w) { return t.indexOf(w) >= 0; });
+      d.hidden = !match;
+      if (match) shown++;
+    });
+    $('#faults-empty').hidden = shown > 0;
+  }
+  qf.addEventListener('input', filterFaults);
+  $('#q-falla-clear').addEventListener('click', function () { qf.value = ''; filterFaults(); qf.focus(); });
+
+  /* Escaleta: horas según el servicio */
+  function fmt(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+  function setStart(start) {
+    $$('#seg button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-start') === start)); });
+    $$('#s-escaleta td[data-off]').forEach(function (td) { td.textContent = fmt(start + (+td.getAttribute('data-off'))); });
+  }
+  $$('#seg button').forEach(function (b) { b.addEventListener('click', function () { setStart(+b.getAttribute('data-start')); }); });
+  setStart(600);
+
+  /* Casilla: algo fuera del programa habitual (se guarda solo en este dispositivo) */
+  var EX = 'vmix-bcn-extra-v1', exT = $('#ex-text'), exM = $('#ex-msg'), exSaved = null;
+  try { exSaved = JSON.parse(store.get(EX) || 'null'); } catch (e) { exSaved = null; }
+  function todayISO() { var t = new Date(); return t.getFullYear() + '-' + pad(t.getMonth() + 1) + '-' + pad(t.getDate()); }
+  function exNote() {
+    var base = 'Se guarda solo en este dispositivo.';
+    if (exSaved && exSaved.t && exSaved.d && exSaved.d !== todayISO()) {
+      var p = exSaved.d.split('-');
+      exM.textContent = 'Escrito el ' + p[2] + '/' + p[1] + '/' + p[0] + '. Bórralo si ya no vale. ' + base;
+    } else { exM.textContent = base; }
+  }
+  if (exSaved && exSaved.t) exT.value = exSaved.t;
+  exNote();
+  exT.addEventListener('input', function () {
+    exSaved = { d: todayISO(), t: exT.value };
+    store.set(EX, JSON.stringify(exSaved)); exNote();
+  });
+  $$('#extras [data-add]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var cur = exT.value.replace(/\s+$/, '');
+      exT.value = (cur ? cur + '\n' : '') + b.getAttribute('data-add') + ': ';
+      exT.dispatchEvent(new Event('input')); exT.focus();
+    });
+  });
+  $('#ex-clear').addEventListener('click', function () {
+    exT.value = ''; exSaved = null; store.set(EX, ''); exNote();
+  });
+
+  /* Cuadrícula de inputs: resaltar un grupo */
+  $$('#ig-filter button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var f = b.getAttribute('data-f');
+      $$('#ig-filter button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      $$('#ig .tile').forEach(function (t) { t.classList.toggle('dim', f !== 'all' && t.getAttribute('data-g') !== f); });
+    });
+  });
+
+  /* Color del texto */
+  var colorBtn = $('#colors');
+  function setColor(on) {
+    document.documentElement.classList.toggle('color-on', on);
+    colorBtn.setAttribute('aria-pressed', String(on));
+    store.set('vmix-bcn-color', on ? '1' : '0');
+  }
+  setColor(store.get('vmix-bcn-color') !== '0');
+  colorBtn.addEventListener('click', function () { setColor(!document.documentElement.classList.contains('color-on')); });
+
+  /* Escaletas en PDF: lista de enlaces. Para añadir una escaleta, suma una línea a ESC_LIST:
+     { date: 'AAAA-MM-DD', name: 'Escaleta 15 de noviembre', url: 'https://…enlace al PDF…' } */
+  var ESC_LIST = [];
+  var escList = $('#esc-list');
+  function escDate(iso) {
+    var d = new Date(iso + 'T12:00:00');
+    if (isNaN(d.getTime())) return iso;
+    var t = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    return t.charAt(0).toUpperCase() + t.slice(1);
+  }
+  function escRender() {
+    escList.textContent = '';
+    var items = ESC_LIST.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+    if (!items.length) {
+      var e = document.createElement('p'); e.className = 'empty';
+      e.textContent = 'Aún no hay escaletas guardadas.';
+      escList.appendChild(e);
+    }
+    items.forEach(function (it) {
+      var row = document.createElement('div'); row.className = 'esc';
+      var info = document.createElement('div'); info.className = 'info';
+      var b = document.createElement('b'); b.textContent = escDate(it.date);
+      var sm = document.createElement('small'); sm.textContent = it.name || 'Escaleta';
+      info.appendChild(b); info.appendChild(sm);
+      var act = document.createElement('div'); act.className = 'esc-actions';
+      var a = document.createElement('a'); a.className = 'btn'; a.href = it.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Abrir PDF';
+      act.appendChild(a); row.appendChild(info); row.appendChild(act); escList.appendChild(row);
+    });
+  }
+  escRender();
+
+  /* Saltos dentro de la referencia */
+  $$('[data-jump]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var el = document.getElementById(b.getAttribute('data-jump'));
+      if (el) el.scrollIntoView({ block: 'start' });
+    });
+  });
+
+  /* Búsqueda global */
+  var index = [];
+  $$('section[data-r]').forEach(function (sec) {
+    var route = sec.getAttribute('data-r'), label = sec.getAttribute('data-label');
+    $$('li, tr, details, p, .chainbox', sec).forEach(function (el) {
+      if (el.tagName === 'P' && el.closest('li, td, details, .note, .tool, .quick, .services')) return;
+      if (el.tagName === 'LI' && el.closest('details, .index, .results')) return;
+      if (el.closest('thead')) return;
+      var text = el.textContent.replace(/\s+/g, ' ').trim();
+      if (text.length < 4) return;
+      index.push({ el: el, route: route, label: label, text: text, n: norm(text) });
+    });
+  });
+  var q = $('#q'), res = $('#results');
+  function runSearch() {
+    var terms = norm(q.value).split(/\s+/).filter(Boolean);
+    res.innerHTML = '';
+    if (!terms.length) { res.hidden = true; return; }
+    var hits = index.filter(function (it) { return terms.every(function (w) { return it.n.indexOf(w) >= 0; }); });
+    if (!hits.length) {
+      var none = document.createElement('li'); none.className = 'none'; none.textContent = 'Sin resultados para «' + q.value.trim() + '».';
+      res.appendChild(none); res.hidden = false; return;
+    }
+    hits.slice(0, 10).forEach(function (it) {
+      var li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button';
+      var w = document.createElement('span'); w.className = 'where'; w.textContent = it.label;
+      var s = document.createElement('span'); s.className = 'snip';
+      var t = it.el.tagName === 'DETAILS' ? it.el.querySelector('summary').textContent.trim() : it.text;
+      s.textContent = t.length > 130 ? t.slice(0, 127) + '…' : t;
+      b.appendChild(w); b.appendChild(s);
+      b.addEventListener('click', function () {
+        pending = it.el;
+        res.hidden = true; q.value = '';
+        if (location.hash === '#' + it.route) { show(); } else { location.hash = it.route; }
+      });
+      li.appendChild(b); res.appendChild(li);
+    });
+    res.hidden = false;
+  }
+  q.addEventListener('input', runSearch);
+  q.addEventListener('keydown', function (e) { if (e.key === 'Escape') { q.value = ''; runSearch(); } });
+
+  /* Al pulsar un enlace interno a la sección actual, subir arriba */
+  $$('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      if (a.getAttribute('href') === location.hash) window.scrollTo(0, 0);
+    });
+  });
+
+  show();
+})();
+</script>
+</body>
+</html>
