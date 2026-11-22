@@ -6,7 +6,8 @@ Uso:  python3 tools/fetch_services.py services.json.enc          (datos reales, 
 Variables de entorno:
   PCO_APP_ID, PCO_SECRET   token personal de Planning Center (secrets de GitHub)
   GUIDE_PASSWORD           clave de la guía (secret de GitHub). Mínimo 10 caracteres.
-  PCO_SERVICE_TYPE         (opcional) texto que debe contener el nombre del tipo de servicio, p. ej. "Domingo"
+  PCO_SERVICE_TYPE         (opcional) texto que debe contener «carpeta › tipo de servicio», p. ej. "Barcelona"
+  PCO_SERVICE_TYPE_ID      (opcional) ids de tipos de servicio separados por comas
   PCO_FOCUS                (opcional) posiciones/equipos de los que listar disponibilidad, separados por comas.
                            Por defecto: "bienvenida"
   PCO_PLANS                (opcional) cuántos planes futuros por tipo de servicio. Por defecto 4
@@ -100,13 +101,22 @@ def collect():
     sundays = (os.environ.get('PCO_ONLY_SUNDAYS') or '1') != '0'
 
     types, _ = paged('/service_types')
-    types = [t for t in types if stf in (t['attributes'].get('name') or '').lower()]
+    try:
+        folders = {f['id']: (f['attributes'].get('name') or '') for f in paged('/folders')[0]}
+    except Exception:  # noqa
+        folders = {}
+    for t in types:
+        par = rel(t, 'parent')
+        t['label'] = ' › '.join(x for x in [folders.get(par['id'], '') if par else '', t['attributes'].get('name') or ''] if x)
+    all_types = [{'id': t['id'], 'label': t['label']} for t in types]
+    ids = [x.strip() for x in (os.environ.get('PCO_SERVICE_TYPE_ID') or '').split(',') if x.strip()]
+    types = [t for t in types if (not ids or t['id'] in ids) and stf in t['label'].lower()]
     if not types:
-        raise SystemExit('No hay ningún tipo de servicio que coincida con "%s"' % stf)
+        raise SystemExit('No hay ningún tipo de servicio que coincida con "%s" %s' % (stf, ids))
 
     plans_out, focus_acc = [], {f: {} for f in focus}
     for st in types:
-        stid, stname = st['id'], st['attributes'].get('name')
+        stid, stname = st['id'], st['label']
         plans, _ = paged('/service_types/%s/plans' % stid, {'filter': 'future', 'order': 'sort_date', 'per_page': 25})
         plans = [p for p in plans if date_of(p['attributes'].get('sort_date'))]
         if sundays:
@@ -139,8 +149,9 @@ def collect():
             for pid in cands[f]:
                 if pid in blk:
                     continue
+                n0 = len(DIAG)
                 b, _ = first_ok(['/people/%s/blockout_dates' % pid, '/people/%s/blockouts' % pid], {'filter': 'future'})
-                blk[pid] = [x['attributes'] for x in b]
+                blk[pid] = None if len(DIAG) > n0 else [x['attributes'] for x in b]
 
         for p in plans:
             day = date_of(p['attributes']['sort_date'])
@@ -166,6 +177,9 @@ def collect():
                     if asg:
                         state, reason = {'C': 'confirmado', 'U': 'pendiente', 'D': 'rechazado'}.get(asg[0][1], 'asignado'), ''
                     else:
+                        if blk.get(pid) is None:
+                            people.append({'name': who, 'state': 'sin datos', 'reason': ''})
+                            continue
                         bl = [b for b in blk.get(pid, []) if overlaps(day, b)]
                         state, reason = ('bloqueado', (bl[0].get('reason') or '')) if bl else ('libre', '')
                         if pid in status_of:
@@ -174,7 +188,7 @@ def collect():
                 focus_acc[f].setdefault(day, []).extend(people)
 
     focus_out = [{'label': f, 'days': [{'date': d, 'people': focus_acc[f][d]} for d in sorted(focus_acc[f])]} for f in focus]
-    return {'demo': False, 'plans': plans_out, 'focus': focus_out, 'notes': DIAG}
+    return {'demo': False, 'plans': plans_out, 'focus': focus_out, 'service_types': all_types, 'notes': DIAG}
 
 
 def demo():
