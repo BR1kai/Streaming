@@ -39,6 +39,7 @@ $ok = 0
 if ($ins.Count -ne $esp.total_inputs) { [void]$dif.Add("Hay $($ins.Count) inputs y la guia dice $($esp.total_inputs).") } else { $ok++ }
 foreach ($p in $esp.inputs.PSObject.Properties) {
   $n = $p.Name; $titulo = $p.Value
+  if (@($esp.opcionales) -contains [int]$n -and -not $ins.ContainsKey($n)) { continue }
   if (-not $ins.ContainsKey($n)) { [void]$dif.Add("Input ${n}: falta (la guia dice '$titulo').") }
   elseif (-not ((Norm $ins[$n].titulo).Contains((Norm $titulo)) -or (Norm $titulo).Contains((Norm $ins[$n].titulo)))) { [void]$dif.Add("Input ${n}: se llama '$($ins[$n].titulo)' y la guia dice '$titulo'.") }
   else { $ok++ }
@@ -62,7 +63,7 @@ foreach ($p in $esp.presets.PSObject.Properties) {
     if (($reales -join ",") -ne (@($p.Value | Sort-Object) -join ",")) { [void]$dif.Add("Input ${n}: sus capas son $($reales -join ', ') y la guia dice $(@($p.Value) -join ', ').") } else { $ok++ }
   }
 }
-if ($esp.inputs.'7' -eq $esp.inputs.'14') { [void]$avisos.Add("Los inputs 7 y 14 figuran en la guia con el mismo nombre; aclara cual es el chyron de la sala.") }
+
 
 Write-Host "vMix $($v.version) $($v.edition) - proyecto: $($v.preset)"
 Write-Host "Comprobaciones correctas: $ok`n"

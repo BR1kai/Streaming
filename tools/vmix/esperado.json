@@ -1,6 +1,6 @@
 {
- "_nota": "Lo esperado según la guía. Generado a partir de ella; se actualiza al validar cambios. Los inputs 5 y 27 son NDI solo de tipo: son contenedores con otros inputs como capas.",
- "total_inputs": 45,
+ "_nota": "Lo esperado según la guía. 42-45 (bautismos) se quitaron de vMix a propósito hasta definir el sistema. 7 y 14 son el mismo chyron con variante.",
+ "total_inputs": 41,
  "inputs": {
   "1": "Audio General",
   "2": "Offline - Blackmagic Design",
@@ -15,7 +15,7 @@
   "11": "WALK IN",
   "12": "WALK OUT",
   "13": "LOGO HILLSONG",
-  "14": "SALA BIENVENIDA CHYRON",
+  "14": "Sala Bienvenida_En Línea_Chyrons + Temporizador",
   "15": "Virtual - LATERALES",
   "16": "LATERALES",
   "17": "NEUTRO 1",
@@ -49,7 +49,7 @@
   "45": "Mix Bautizo"
  },
  "ndi": [
-  2,
+  3,
   31
  ],
  "mixes": {
@@ -74,6 +74,12 @@
  },
  "chyron_sala": 14,
  "api": "http://127.0.0.1:8088/api",
+ "opcionales": [
+  42,
+  43,
+  44,
+  45
+ ],
  "ndi_contenedores": [
   5,
   27
