@@ -20,11 +20,14 @@ $v = $x.vmix
 $ins = @{}
 foreach ($e in $v.inputs.input) {
   $capas = @()
-  foreach ($o in @($e.overlay)) { if ($o) { $k = $o.number; if (-not $k) { $k = $o.key }; $capas += "$k" } }
+  foreach ($o in @($e.overlay)) { if ($o) { $capas += "$($o.key)" } }
   $t = $e.title; if (-not $t) { $t = $e.'#text' }
-  $ins["$($e.number)"] = @{ crudo = $e.InnerXml; titulo = "$t".Trim(); tipo = "$($e.type)"; capas = $capas }
+  $ins["$($e.number)"] = @{ clave = "$($e.key)"; crudo = $e.InnerXml; titulo = "$t".Trim(); tipo = "$($e.type)"; capas = $capas }
 }
 
+$porClave = @{}
+foreach ($k in $ins.Keys) { $porClave[$ins[$k].clave] = $k }
+foreach ($k in @($ins.Keys)) { $ins[$k].capas = @($ins[$k].capas | ForEach-Object { if ($porClave.ContainsKey($_)) { $porClave[$_] } else { "?" } }) }
 $snap = Join-Path $aqui "instantaneas"
 New-Item -ItemType Directory -Force -Path $snap | Out-Null
 $marca = Get-Date -Format "yyyyMMdd-HHmmss"
@@ -67,7 +70,7 @@ if ($avisos.Count) { Write-Host "`nAVISOS:"; $avisos | ForEach-Object { Write-Ho
 Write-Host "`nLISTADO (numero | tipo | titulo):"
 foreach ($k in ($ins.Keys | Sort-Object { [int]$_ })) { Write-Host ("  {0} | {1} | {2}" -f $k, $ins[$k].tipo, $ins[$k].titulo) }
 Write-Host "`nCAPAS CRUDAS de 4, 5 y 6:"
-foreach ($k in "4","5","6") { if ($ins.ContainsKey($k)) { $c = $ins[$k].crudo; if ($c.Length -gt 500) { $c = $c.Substring(0,500) }; Write-Host "  $k [$($ins[$k].tipo)]: $c" } }
+foreach ($k in "4","5","6") { if ($ins.ContainsKey($k)) { $c = $ins[$k].crudo; if ($c.Length -gt 500) { $c = $c.Substring(0,500) }; Write-Host "  $k [$($ins[$k].tipo)] capas (inputs): $($ins[$k].capas -join ', ')" } }
 Write-Host "`nInstantanea guardada en: instantaneas\vmix-$marca.xml"
 if ($Adoptar -and $dif.Count) {
   $nuevo = [ordered]@{}
