@@ -102,12 +102,21 @@ def collect():
 
     types, _ = paged('/service_types')
     try:
-        folders = {f['id']: (f['attributes'].get('name') or '') for f in paged('/folders')[0]}
+        fl = {f['id']: f for f in paged('/folders')[0]}
     except Exception:  # noqa
-        folders = {}
+        fl = {}
+
+    def fpath(fid):
+        out, seen = [], set()
+        while fid and fid in fl and fid not in seen:
+            seen.add(fid)
+            out.append(fl[fid]['attributes'].get('name') or '')
+            par = rel(fl[fid], 'parent')
+            fid = par['id'] if par else None
+        return list(reversed(out))
     for t in types:
         par = rel(t, 'parent')
-        t['label'] = ' › '.join(x for x in [folders.get(par['id'], '') if par else '', t['attributes'].get('name') or ''] if x)
+        t['label'] = ' › '.join(fpath(par['id'] if par else None) + [t['attributes'].get('name') or ''])
     all_types = [{'id': t['id'], 'label': t['label']} for t in types]
     ids = [x.strip() for x in (os.environ.get('PCO_SERVICE_TYPE_ID') or '').split(',') if x.strip()]
     types = [t for t in types if (not ids or t['id'] in ids) and stf in t['label'].lower()]
