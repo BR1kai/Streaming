@@ -21,8 +21,9 @@ DIAG = []
 def credentials():
     """App ID y Secret. Acepta PCO_APP_ID + PCO_SECRET, o un único valor «appid:secret»."""
     app, sec = os.environ.get('PCO_APP_ID', '').strip(), os.environ.get('PCO_SECRET', '').strip()
-    if not app and ':' in sec:
-        app, sec = sec.split(':', 1)
+    if ':' in sec:  # el secret ya trae «appid:secret»: manda lo que lleva dentro
+        app, sec = [x.strip() for x in sec.split(':', 1)]
+    print('credenciales: app id de %d caracteres, secret de %d caracteres' % (len(app), len(sec)))
     if not app or not sec:
         raise SystemExit('Faltan las credenciales de Planning Center (PCO_APP_ID y PCO_SECRET, o el secret SERVICES con «appid:secret»).')
     return app + ':' + sec
@@ -39,6 +40,8 @@ def api(path, params=None):
             with urllib.request.urlopen(req, timeout=30) as r:
                 return json.load(r)
         except urllib.error.HTTPError as e:
+            if e.code == 401:
+                raise SystemExit('Planning Center ha rechazado las credenciales (401): revisa que el App ID y el Secret sean los del mismo token.')
             if e.code == 429:
                 time.sleep(int(e.headers.get('Retry-After', '20')) + 1)
                 continue
