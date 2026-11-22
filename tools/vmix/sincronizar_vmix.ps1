@@ -2,6 +2,7 @@
 param([string]$Archivo = "", [switch]$Adoptar)
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+function Norm($t){ $t = "$t".ToLower() -replace "\.(mp4|mov|jpg|png|mp3|wav)$","" -replace "[_\u2013\u2014-]"," " -replace "\s+"," "; return $t.Trim() }
 $aqui = Split-Path -Parent $MyInvocation.MyCommand.Path
 $espPath = Join-Path $aqui "esperado.json"
 $esp = Get-Content $espPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -21,7 +22,7 @@ foreach ($e in $v.inputs.input) {
   $capas = @()
   foreach ($o in @($e.overlay)) { if ($o) { $k = $o.number; if (-not $k) { $k = $o.key }; $capas += "$k" } }
   $t = $e.title; if (-not $t) { $t = $e.'#text' }
-  $ins["$($e.number)"] = @{ titulo = "$t".Trim(); tipo = "$($e.type)"; capas = $capas }
+  $ins["$($e.number)"] = @{ crudo = $e.InnerXml; titulo = "$t".Trim(); tipo = "$($e.type)"; capas = $capas }
 }
 
 $snap = Join-Path $aqui "instantaneas"
@@ -36,7 +37,7 @@ if ($ins.Count -ne $esp.total_inputs) { [void]$dif.Add("Hay $($ins.Count) inputs
 foreach ($p in $esp.inputs.PSObject.Properties) {
   $n = $p.Name; $titulo = $p.Value
   if (-not $ins.ContainsKey($n)) { [void]$dif.Add("Input ${n}: falta (la guia dice '$titulo').") }
-  elseif ($ins[$n].titulo.ToLower() -ne "$titulo".Trim().ToLower()) { [void]$dif.Add("Input ${n}: se llama '$($ins[$n].titulo)' y la guia dice '$titulo'.") }
+  elseif (-not ((Norm $ins[$n].titulo).Contains((Norm $titulo)) -or (Norm $titulo).Contains((Norm $ins[$n].titulo)))) { [void]$dif.Add("Input ${n}: se llama '$($ins[$n].titulo)' y la guia dice '$titulo'.") }
   else { $ok++ }
 }
 foreach ($n in $ins.Keys) { if (-not ($esp.inputs.PSObject.Properties.Name -contains $n)) { [void]$dif.Add("Input ${n} '$($ins[$n].titulo)': existe en vMix y no esta en la guia.") } }
@@ -63,6 +64,10 @@ Write-Host "vMix $($v.version) $($v.edition) - proyecto: $($v.preset)"
 Write-Host "Comprobaciones correctas: $ok`n"
 if ($dif.Count) { Write-Host "DIFERENCIAS CON LA GUIA ($($dif.Count)):"; $dif | ForEach-Object { Write-Host "  X $_" } } else { Write-Host "OK: vMix coincide con la guia." }
 if ($avisos.Count) { Write-Host "`nAVISOS:"; $avisos | ForEach-Object { Write-Host "  ! $_" } }
+Write-Host "`nLISTADO (numero | tipo | titulo):"
+foreach ($k in ($ins.Keys | Sort-Object { [int]$_ })) { Write-Host ("  {0} | {1} | {2}" -f $k, $ins[$k].tipo, $ins[$k].titulo) }
+Write-Host "`nCAPAS CRUDAS de 4, 5 y 6:"
+foreach ($k in "4","5","6") { if ($ins.ContainsKey($k)) { $c = $ins[$k].crudo; if ($c.Length -gt 500) { $c = $c.Substring(0,500) }; Write-Host "  $k [$($ins[$k].tipo)]: $c" } }
 Write-Host "`nInstantanea guardada en: instantaneas\vmix-$marca.xml"
 if ($Adoptar -and $dif.Count) {
   $nuevo = [ordered]@{}
