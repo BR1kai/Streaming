@@ -123,7 +123,7 @@ def collect():
     if not types:
         raise SystemExit('No hay ningún tipo de servicio que coincida con "%s" %s' % (stf, ids))
 
-    plans_out, focus_acc = [], {f: {} for f in focus}
+    plans_out, typedata, all_days = [], [], set()
     for st in types:
         stid, stname = st['id'], st['label']
         plans, _ = paged('/service_types/%s/plans' % stid, {'filter': 'future', 'order': 'sort_date', 'per_page': 25})
@@ -165,6 +165,8 @@ def collect():
                     b, _ = first_ok(['/people/%s/blockouts' % pid, '/people/%s/blockout_dates' % pid])
                 blk[pid] = None if len(DIAG) > n0 else [x['attributes'] for x in b]
 
+        td = {'cands': cands, 'blk': blk, 'status': {}}
+        typedata.append(td)
         for p in plans:
             day = date_of(p['attributes']['sort_date'])
             tm, inc = paged('/service_types/%s/plans/%s/team_members' % (stid, p['id']), {'include': 'team'})
@@ -182,22 +184,9 @@ def collect():
             title = p['attributes'].get('title') or p['attributes'].get('dates') or stname
             plans_out.append({'date': day, 'title': title, 'service_type': stname,
                               'teams': [{'team': k, 'members': v} for k, v in by_team.items()]})
-            for f in focus:
-                people = []
-                for pid, who in sorted(cands[f].items(), key=lambda kv: kv[1].lower()):
-                    asg = [s for s in status_of.get(pid, []) if f in s[0].lower()] or []
-                    if asg:
-                        state, reason = {'C': 'confirmado', 'U': 'pendiente', 'D': 'rechazado'}.get(asg[0][1], 'asignado'), ''
-                    else:
-                        if blk.get(pid) is None:
-                            people.append({'name': who, 'state': 'sin datos', 'reason': ''})
-                            continue
-                        bl = [b for b in blk.get(pid, []) if overlaps(day, b)]
-                        state, reason = ('bloqueado', (bl[0].get('reason') or '')) if bl else ('libre', '')
-                        if pid in status_of:
-                            state = 'en otra posición' if not bl else state
-                    people.append({'name': who, 'state': state, 'reason': reason})
-                focus_acc[f].setdefault(day, []).extend(people)
+            all_days.add(day)
+            for pid, lst in status_of.items():
+                td['status'].setdefault(day, {}).setdefault(pid, []).extend(lst)
 
     order = ['confirmado', 'pendiente', 'rechazado', 'asignado', 'bloqueado', 'libre', 'en otra posición', 'sin datos']
 
@@ -208,7 +197,23 @@ def collect():
             if cur is None or order.index(pe['state']) < order.index(cur['state']):
                 best[pe['name']] = pe
         return sorted(best.values(), key=lambda x: x['name'].lower())
-    focus_out = [{'label': f, 'days': [{'date': d, 'people': merge(focus_acc[f][d])} for d in sorted(focus_acc[f])]} for f in focus]
+    focus_out = []
+    for f in focus:
+        days = []
+        for day in sorted(all_days):
+            people = []
+            for td in typedata:
+                for pid, who in td['cands'][f].items():
+                    st_ = [x for x in td['status'].get(day, {}).get(pid, []) if f in x[0].lower()]
+                    if st_:
+                        people.append({'name': who, 'state': {'C': 'confirmado', 'U': 'pendiente', 'D': 'rechazado'}.get(st_[0][1], 'asignado'), 'reason': ''})
+                    elif td['blk'].get(pid) is None:
+                        people.append({'name': who, 'state': 'sin datos', 'reason': ''})
+                    else:
+                        bl = [b for b in td['blk'][pid] if overlaps(day, b)]
+                        people.append({'name': who, 'state': 'bloqueado' if bl else 'libre', 'reason': (bl[0].get('reason') or '') if bl else ''})
+            days.append({'date': day, 'people': merge(people)})
+        focus_out.append({'label': f, 'days': days})
     return {'demo': False, 'plans': plans_out, 'focus': focus_out, 'service_types': all_types, 'notes': DIAG}
 
 
