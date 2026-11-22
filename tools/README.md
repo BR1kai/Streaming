@@ -5,4 +5,4 @@
 - `fetch_services.py`: lo ejecuta GitHub Actions cada día para bajar los datos de Services y cifrarlos.
 
 Secrets del repositorio: `PCO_APP_ID`, `PCO_SECRET`, `GUIDE_PASSWORD`.
-Variables opcionales: `PCO_SERVICE_TYPE`, `PCO_FOCUS`.
+Variables opcionales: `PCO_SERVICE_TYPE` (por defecto «Domingo»), `PCO_SERVICE_TYPE_ID`.

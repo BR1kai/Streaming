@@ -25,10 +25,9 @@ jobs:
           PCO_APP_ID: ${{ secrets.PCO_APP_ID || vars.PCO_APP_ID || vars.PC0_APP_ID }}
           PCO_SECRET: ${{ secrets.PCO_SECRET || secrets.SERVICES }}
           GUIDE_PASSWORD: ${{ secrets.GUIDE_PASSWORD }}
-          GUIDE_ALLOW_SHORT: '1'   # permite clave corta (decisión del equipo); con clave corta no se publican los motivos de bloqueo
-          PCO_SERVICE_TYPE: ${{ vars.PCO_SERVICE_TYPE || 'Barcelona' }}
+          GUIDE_ALLOW_SHORT: '1'   # permite clave corta (decisión del equipo)
+          PCO_SERVICE_TYPE: ${{ vars.PCO_SERVICE_TYPE || 'Domingo' }}
           PCO_SERVICE_TYPE_ID: ${{ vars.PCO_SERVICE_TYPE_ID }}
-          PCO_FOCUS: ${{ vars.PCO_FOCUS }}
         run: python tools/fetch_services.py services.json.enc
       - name: Guardar si ha cambiado
         run: |
