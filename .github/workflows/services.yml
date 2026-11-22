@@ -22,7 +22,7 @@ jobs:
       - run: pip install cryptography
       - name: Descargar de Planning Center
         env:
-          PCO_APP_ID: ${{ secrets.PCO_APP_ID || vars.PCO_APP_ID }}
+          PCO_APP_ID: ${{ secrets.PCO_APP_ID || vars.PCO_APP_ID || vars.PC0_APP_ID }}
           PCO_SECRET: ${{ secrets.PCO_SECRET || secrets.SERVICES }}
           GUIDE_PASSWORD: ${{ secrets.GUIDE_PASSWORD }}
           GUIDE_ALLOW_SHORT: '1'   # permite clave corta (decisión del equipo); con clave corta no se publican los motivos de bloqueo
