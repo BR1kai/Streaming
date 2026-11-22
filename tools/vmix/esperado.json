@@ -1,0 +1,77 @@
+{
+ "_nota": "Lo esperado según la guía. Generado a partir de ella; se actualiza al validar cambios.",
+ "total_inputs": 45,
+ "inputs": {
+  "1": "Audio General",
+  "2": "Offline - Blackmagic Design",
+  "3": "NDI Mac mini de HILLSONG",
+  "4": "STREAMING",
+  "5": "BACKUP SIN AV",
+  "6": "STREAMING NO LOGO 10H",
+  "7": "SALA BIENVENIDA CHYRON",
+  "8": "CORTINILLA",
+  "9": "EN DIRECTO",
+  "10": "TEMPORIZADOR",
+  "11": "WALK IN",
+  "12": "WALK OUT",
+  "13": "LOGO HILLSONG",
+  "14": "SALA BIENVENIDA CHYRON",
+  "15": "Virtual - LATERALES",
+  "16": "LATERALES",
+  "17": "NEUTRO 1",
+  "18": "NEUTRO 2",
+  "19": "NEUTRO 3",
+  "20": "VIDEO 1 – Pantallas laterales_Mundial",
+  "21": "Chyron Juan Mejías",
+  "22": "LATERAL MIX",
+  "23": "Black",
+  "24": "Chyron Damsy Mich",
+  "25": "Chyron los dos",
+  "26": "Instagram fondo",
+  "27": "PGM a IG",
+  "28": "PLANO CORTO",
+  "29": "PLANO GENERAL",
+  "30": "INSTAGRAM MIX",
+  "31": "NDI Mac mini de AV",
+  "32": "MADRID",
+  "33": "VALENCIA",
+  "34": "Máscara BCN-MAD",
+  "35": "Máscara BCN-VLC",
+  "36": "Máscara MAD-BCN",
+  "37": "Máscara MAD-VLC",
+  "38": "Máscara VLC-MAD",
+  "39": "Máscara VLC-BCN",
+  "40": "Máscara Muestra Espacios",
+  "41": "Máscara En Línea",
+  "42": "CAM 3",
+  "43": "CAM 4",
+  "44": "COMPO BAUT",
+  "45": "Mix Bautizo"
+ },
+ "ndi": [
+  3,
+  31
+ ],
+ "mixes": {
+  "22": 2,
+  "30": 3,
+  "45": 4
+ },
+ "presets": {
+  "4": [
+   2,
+   3,
+   13
+  ],
+  "5": [
+   2,
+   13
+  ],
+  "6": [
+   2,
+   3
+  ]
+ },
+ "chyron_sala": 14,
+ "api": "http://127.0.0.1:8088/api"
+}
