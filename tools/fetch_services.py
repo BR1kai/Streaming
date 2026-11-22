@@ -160,6 +160,9 @@ def collect():
                     continue
                 n0 = len(DIAG)
                 b, _ = first_ok(['/people/%s/blockout_dates' % pid, '/people/%s/blockouts' % pid], {'filter': 'future'})
+                if len(DIAG) > n0:  # segundo intento, sin filtro
+                    del DIAG[n0:]
+                    b, _ = first_ok(['/people/%s/blockouts' % pid, '/people/%s/blockout_dates' % pid])
                 blk[pid] = None if len(DIAG) > n0 else [x['attributes'] for x in b]
 
         for p in plans:
@@ -196,7 +199,16 @@ def collect():
                     people.append({'name': who, 'state': state, 'reason': reason})
                 focus_acc[f].setdefault(day, []).extend(people)
 
-    focus_out = [{'label': f, 'days': [{'date': d, 'people': focus_acc[f][d]} for d in sorted(focus_acc[f])]} for f in focus]
+    order = ['confirmado', 'pendiente', 'rechazado', 'asignado', 'bloqueado', 'libre', 'en otra posición', 'sin datos']
+
+    def merge(people):  # la misma persona puede salir en varios servicios del mismo día
+        best = {}
+        for pe in people:
+            cur = best.get(pe['name'])
+            if cur is None or order.index(pe['state']) < order.index(cur['state']):
+                best[pe['name']] = pe
+        return sorted(best.values(), key=lambda x: x['name'].lower())
+    focus_out = [{'label': f, 'days': [{'date': d, 'people': merge(focus_acc[f][d])} for d in sorted(focus_acc[f])]} for f in focus]
     return {'demo': False, 'plans': plans_out, 'focus': focus_out, 'service_types': all_types, 'notes': DIAG}
 
 
