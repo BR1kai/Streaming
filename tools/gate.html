@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#d8d9d1">
+<title>Guía de usuario de Streaming</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231b1c1a'/%3E%3Cpath d='M9 8h14v3H9zM9 14.5h14v3H9zM9 21h9v3H9z' fill='%23d8d9d1'/%3E%3C/svg%3E">
+<style>
+:root { --paper:#d8d9d1; --panel:#e4e5de; --ink:#1b1c1a; --ink2:#4a4c47; --err:#a4392c; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper:#1d1e1c; --panel:#262725; --ink:#e6e7df; --ink2:#a9aba3; --err:#e2796c; color-scheme: dark; } }
+* { box-sizing: border-box; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; min-height: 100vh; background: var(--paper); color: var(--ink); font: 16px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+  display: grid; place-items: center; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+main { width: 100%; max-width: 420px; border: 2px solid var(--ink); background: var(--panel); padding: 26px 24px; display: grid; gap: 16px; }
+.kicker { font: 500 11px/1.2 "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--ink2); }
+h1 { margin: 0; font: 700 26px/1.15 "IBM Plex Mono", ui-monospace, monospace; text-wrap: balance; }
+p { margin: 0; color: var(--ink2); }
+label.f { display: grid; gap: 6px; font: 500 12px/1 "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; }
+input[type=password], input[type=text] { width: 100%; min-width: 0; font: 18px "IBM Plex Mono", ui-monospace, monospace; padding: 10px 12px; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); border-radius: 0; }
+.row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink2); }
+.row input { width: 18px; height: 18px; accent-color: var(--ink); }
+button { font: 600 13px "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; padding: 12px 16px; border: 2px solid var(--ink); background: var(--ink); color: var(--paper); border-radius: 0; cursor: pointer; }
+button:disabled { opacity: .5; cursor: wait; }
+#msg { min-height: 1.4em; color: var(--err); font-size: 14px; }
+:focus-visible { outline: 3px solid #2f4d62; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Hillsong Streaming BCN</div>
+  <h1>Guía de usuario de Streaming</h1>
+  <p>Esta guía es solo para el equipo. Escribe la clave para entrar.</p>
+  <form id="f" autocomplete="off">
+    <label class="f">Clave<input id="pw" type="password" autocomplete="current-password" autofocus required></label>
+    <div class="row" style="margin-top:12px"><input id="rem" type="checkbox"><label for="rem">Recordar en este dispositivo</label></div>
+    <div id="msg" role="alert" style="margin-top:8px"></div>
+    <button id="go" type="submit">Entrar</button>
+  </form>
+</main>
+<script>
+(function () {
+  var DATA = __PAYLOAD__;
+  var ITER = 600000, KEY = 'vmix-bcn-gate';
+  var enc = new TextEncoder();
+  function b64(s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+  var salt = b64(DATA.s), iv = b64(DATA.i), ct = b64(DATA.c);
+  function get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function put(v) { try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) {} }
+  async function derive(pass) {
+    var km = await crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: ITER, hash: 'SHA-256' }, km, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  }
+  async function openPdf(path) {
+    var w = window.open('', '_blank');
+    try {
+      var r = await fetch(path + '.enc'); if (!r.ok) throw new Error('http ' + r.status);
+      var buf = new Uint8Array(await r.arrayBuffer());
+      var pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, window.__gateKey, buf.slice(12));
+      var url = URL.createObjectURL(new Blob([pt], { type: 'application/pdf' }));
+      if (w) { w.location.href = url; } else { var a = document.createElement('a'); a.href = url; a.download = path.split('/').pop(); a.click(); }
+    } catch (e) { if (w) w.close(); alert('No se ha podido abrir el PDF.'); }
+  }
+  async function enter(pass) {
+    var key = await derive(pass);
+    var pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, ct);
+    window.__gateKey = key; window.__gatePass = pass; window.__gateOpen = openPdf;
+    var html = new TextDecoder().decode(pt);
+    document.open(); document.write(html); document.close();
+  }
+  var f = document.getElementById('f'), pw = document.getElementById('pw'), msg = document.getElementById('msg'), go = document.getElementById('go');
+  f.addEventListener('submit', async function (ev) {
+    ev.preventDefault(); msg.textContent = ''; go.disabled = true;
+    try { var v = pw.value, remember = document.getElementById('rem').checked; await enter(v); if (remember) put(v); }
+    catch (e) { msg.textContent = 'Clave incorrecta.'; go.disabled = false; pw.select(); }
+  });
+  var saved = get();
+  if (saved) { enter(saved).catch(function () { put(null); }); }
+  if (!(window.crypto && crypto.subtle)) msg.textContent = 'Este navegador no puede abrir la guía. Prueba con Chrome, Safari o Firefox actualizados.';
+})();
+</script>
+</body>
+</html>
