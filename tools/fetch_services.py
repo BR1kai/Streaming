@@ -18,11 +18,21 @@ API = 'https://api.planningcenteronline.com/services/v2'
 DIAG = []
 
 
+def credentials():
+    """App ID y Secret. Acepta PCO_APP_ID + PCO_SECRET, o un único valor «appid:secret»."""
+    app, sec = os.environ.get('PCO_APP_ID', '').strip(), os.environ.get('PCO_SECRET', '').strip()
+    if not app and ':' in sec:
+        app, sec = sec.split(':', 1)
+    if not app or not sec:
+        raise SystemExit('Faltan las credenciales de Planning Center (PCO_APP_ID y PCO_SECRET, o el secret SERVICES con «appid:secret»).')
+    return app + ':' + sec
+
+
 def api(path, params=None):
     url = path if path.startswith('http') else API + path
     if params:
         url += ('&' if '?' in url else '?') + urllib.parse.urlencode(params)
-    tok = base64.b64encode((os.environ['PCO_APP_ID'] + ':' + os.environ['PCO_SECRET']).encode()).decode()
+    tok = base64.b64encode(credentials().encode()).decode()
     req = urllib.request.Request(url, headers={'Authorization': 'Basic ' + tok, 'User-Agent': 'streaming-guia'})
     for _ in range(5):
         try:
