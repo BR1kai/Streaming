@@ -2,7 +2,7 @@
 param([string]$Archivo = "", [switch]$Adoptar)
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-function Norm($t){ $t = "$t".ToLower() -replace "\.(mp4|mov|jpg|png|mp3|wav)$","" -replace "[_\u2013\u2014-]"," " -replace "\s+"," "; return $t.Trim() }
+function Norm($t){ $t = "$t".ToLower() -replace "\.(mp4|mov|jpg|png|mp3|wav)$",""; $t = $t.Normalize([Text.NormalizationForm]::FormD) -replace "\p{Mn}",""; return ($t -replace "[^a-z0-9]","") }
 $aqui = Split-Path -Parent $MyInvocation.MyCommand.Path
 $espPath = Join-Path $aqui "esperado.json"
 $esp = Get-Content $espPath -Raw -Encoding UTF8 | ConvertFrom-Json
