@@ -213,10 +213,15 @@ def unseal(raw, pw):
 def main():
     out = sys.argv[1]
     pw = os.environ['GUIDE_PASSWORD']
-    if len(pw) < 10 and os.environ.get('GUIDE_ALLOW_SHORT') != '1':
+    if len(pw) < 10 and os.environ.get('GUIDE_ALLOW_SHORT') != '1':  # el workflow lo activa a propósito
         raise SystemExit('La clave de la guía tiene menos de 10 caracteres: no se publican nombres con una clave tan corta. '
                          'Cambia el secret GUIDE_PASSWORD y la clave de la guía.')
     data = demo() if '--demo' in sys.argv else collect()
+    if len(pw) < 10:  # clave corta: no se publican los motivos de los bloqueos (pueden ser privados)
+        for f in data.get('focus', []):
+            for d in f['days']:
+                for pe in d['people']:
+                    pe['reason'] = ''
     data['generated'] = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     if os.path.exists(out):
         try:
