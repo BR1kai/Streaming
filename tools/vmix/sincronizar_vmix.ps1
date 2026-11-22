@@ -44,7 +44,8 @@ foreach ($p in $esp.inputs.PSObject.Properties) {
   else { $ok++ }
 }
 foreach ($n in $ins.Keys) { if (-not ($esp.inputs.PSObject.Properties.Name -contains $n)) { [void]$dif.Add("Input ${n} '$($ins[$n].titulo)': existe en vMix y no esta en la guia.") } }
-$ndi = @($ins.Keys | Where-Object { $ins[$_].tipo -ieq "NDI" } | ForEach-Object { [int]$_ } | Sort-Object)
+$cont = @($esp.ndi_contenedores)
+$ndi = @($ins.Keys | Where-Object { $ins[$_].tipo -ieq "NDI" } | ForEach-Object { [int]$_ } | Where-Object { $cont -notcontains $_ } | Sort-Object)
 $ndiEsp = @($esp.ndi | Sort-Object)
 if (($ndi -join ",") -ne ($ndiEsp -join ",")) { [void]$dif.Add("Inputs NDI en vMix: $($ndi -join ', '); la guia dice $($ndiEsp -join ', ').") } else { $ok++ }
 foreach ($p in $esp.mixes.PSObject.Properties) {
